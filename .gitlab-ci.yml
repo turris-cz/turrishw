@@ -1,0 +1,20 @@
+image: registry.labs.nic.cz/turris/turrishw
+
+stages:
+  - test
+
+python2:
+  stage: test
+  before_script:
+    - pip install .
+    - export LD_LIBRARY_PATH=/usr/local/lib
+  script:
+    - python -m pytest tests
+
+python3:
+  stage: test
+  before_script:
+    - pip3 install .
+    - export LD_LIBRARY_PATH=/usr/local/lib
+  script:
+    - python3 -m pytest tests
