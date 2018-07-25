@@ -1,0 +1,8 @@
+*~
+.*
+*.pyc
+__*__
+
+!.gitignore
+!.DockerFile
+!.gitlab-ci.yml
