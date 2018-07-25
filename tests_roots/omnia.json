@@ -1,0 +1,19 @@
+{
+  "name": "Turris Omnia",
+  "serial": 42949673426,
+  "memory": 2070,
+  "ethernet": {
+    "eth0": {
+      "hwaddr": "d8:58:d7:00:1a:1c",
+      "speed": "1000"
+    },
+    "eth1": {
+      "hwaddr": "d8:58:d7:00:1a:1d",
+      "speed": "1000"
+    },
+    "eth2": {
+      "hwaddr": "d8:58:d7:00:1a:1e",
+      "speed": "1000"
+    }
+  }
+}

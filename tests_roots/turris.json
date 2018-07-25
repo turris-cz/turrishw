@@ -1,0 +1,19 @@
+{
+  "name": "Turris", 
+  "serial": 34359738380, 
+  "memory": 2069,
+  "ethernet": {
+    "eth0": {
+      "hwaddr": "d8:58:d7:00:0c:ed", 
+      "speed": "1000"
+    }, 
+    "eth1": {
+      "hwaddr": "d8:58:d7:00:0c:ee", 
+      "speed": "1000"
+    }, 
+    "eth2": {
+      "hwaddr": "d8:58:d7:00:0c:ef", 
+      "speed": "1000"
+    }
+  }
+}

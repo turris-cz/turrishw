@@ -1,0 +1,3 @@
+#!/bin/sh
+[ "$1" == "serial-number" ] || exit 1
+echo 0000000A000001D2
