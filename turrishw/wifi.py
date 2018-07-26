@@ -23,26 +23,32 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 # EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 import os
-import string
-
-__P_SYS_PLATFORM__ = '/sys/devices/platform'
 
 
-def sysstrip(sysstr):
+class Wifi:
+    """Wifi adapter representation.
     """
-    Strip not only white characters but also \0.
-    """
-    return sysstr.strip(string.whitespace + '\0')
+    def __init__(self, syspath):
+        assert self.syspath_is(syspath)
+        self._syspath = syspath
 
+    @staticmethod
+    def dev_type():
+        """Common device function returning device type as a string.
+        """
+        return "Wifi"
 
-def path_soc():
-    """
-    Returns /sys path to SOC
-    """
-    intregs = os.path.join(__P_SYS_PLATFORM__, 'soc/soc:internal-regs')
-    if os.path.isdir(intregs):  # Probably SOC on PowerPC
-        return intregs
-    # Probably SOC on ARM
-    return next(
-        os.path.join(__P_SYS_PLATFORM__, dv)
-        for dv in os.listdir(__P_SYS_PLATFORM__) if dv.startswith('soc@'))
+    @staticmethod
+    def syspath_is(syspath):
+        """Common identification function of devices. It returns True if
+        syspath points to wifi adapter/device. Otherwise returns False.
+        """
+        return \
+            os.path.isdir(os.path.join(syspath, 'net')) and \
+            os.path.isdir(os.path.join(syspath, 'ieee80211'))
+
+    @property
+    def dev_id(self):
+        """Returns Wifi adapter unique identifier.
+        """
+        return os.path.basename(os.path.realpath(self._syspath) + '.wifi')

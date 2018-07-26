@@ -23,12 +23,12 @@ import turrishw as thw
 
 # TODO mox-4.14
 @pytest.fixture(params=[
-    {"board": "turris", "version": "4.4"},
-    {"board": "turris", "version": "4.14"},
-    {"board": "omnia", "version": "4.4"},
+    "turris-4.4",
+    "turris-4.14",
+    "omnia-4.4",
     ])
 def set_root(request):
-    root = request.param['board'] + '-' + request.param['version']
+    root = request.param
     testdir = os.path.join(os.getcwd(), 'tests_roots')
 
     assert thw.board.__P_MODEL__ == "/sys/firmware/devicetree/base/model"
@@ -55,7 +55,7 @@ def set_root(request):
     os.environ['PATH'] = \
         os.path.join(testdir, root, "bin") + ":" + os.environ['PATH']
 
-    yield os.path.join(testdir, request.param['board'] + '.json')
+    yield os.path.join(testdir, root + '.json')
 
     # Restore all modified paths and PATH environment variable
     def _restore(mod):

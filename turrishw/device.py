@@ -22,27 +22,23 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 # EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-import os
-import string
-
-__P_SYS_PLATFORM__ = '/sys/devices/platform'
+from . import ethernet, wifi
 
 
-def sysstrip(sysstr):
+def lookup(dev_id):
+    """Lookup device object using unique dev_id used in TurrisHW library. If
+    dev_id is invalid or there is no such device then None is returned.
     """
-    Strip not only white characters but also \0.
-    """
-    return sysstr.strip(string.whitespace + '\0')
+    # TODO
+    return None
 
 
-def path_soc():
+def sys_device(syspath):
+    """Identify and return specific device representation. It path is not
+    device or given device is not supported then None is returned.
     """
-    Returns /sys path to SOC
-    """
-    intregs = os.path.join(__P_SYS_PLATFORM__, 'soc/soc:internal-regs')
-    if os.path.isdir(intregs):  # Probably SOC on PowerPC
-        return intregs
-    # Probably SOC on ARM
-    return next(
-        os.path.join(__P_SYS_PLATFORM__, dv)
-        for dv in os.listdir(__P_SYS_PLATFORM__) if dv.startswith('soc@'))
+    if ethernet.Ethernet.syspath_is(syspath):
+        return ethernet.Ethernet(syspath)
+    if wifi.Wifi.syspath_is(syspath):
+        return wifi.Wifi(syspath)
+    return None

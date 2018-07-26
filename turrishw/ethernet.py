@@ -23,40 +23,60 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 # EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 import os
-from ._utils import sysstrip
-
-__P_SYS_PLATFORM__ = '/sys/devices/platform'
-# Path with SOC identification directory on PowerPC
-__P_SOC_INTERNAL_REGS__ = '/sys/devices/platform/soc/soc:internal-regs'
+from . import network
+from ._utils import path_soc as _path_soc
+from ._utils import sysstrip as _sysstrip
 
 
-class _Ethernet:
+class Ethernet:
+    """Ethernet socket representation.
     """
-    Ethernet socket representation.
-    """
-    def __init__(self, name, syspath):
-        self._name = name
+    def __init__(self, syspath):
+        assert self.syspath_is(syspath)
         self._syspath = syspath
 
-    @property
-    def name(self):
-        """Name of ethernet interface associated with this socket.
+    @staticmethod
+    def dev_type():
+        """Common device function returning device type as a string.
         """
-        return self._name
+        return "Ethernet"
+
+    @staticmethod
+    def syspath_is(syspath):
+        """Common identification function of devices. It returns True if
+        syspath points to ethernet socket/device. Otherwise returns False.
+        """
+        return os.path.realpath(syspath).endswith('.ethernet')
 
     @property
-    def hwaddr(self):
-        """Hardware address (MAC address)
+    def dev_id(self):
+        """Returns unique ethernet socket id.
         """
-        with open(os.path.join(self._syspath, 'address')) as file:
-            return sysstrip(file.read())
+        return os.path.basename(os.path.realpath(self._syspath))
 
     @property
     def speed(self):
         """Currently negotiated speed in MB.
         """
-        with open(os.path.join(self._syspath, 'speed')) as file:
-            return sysstrip(file.read())
+        # It's reported in network interface not in ethernet device because of
+        # that we are going to net directory. Also there seems to be no
+        # situation when there is more then one interface directly associated
+        # with one device.
+        upper = os.path.join(self._syspath, 'net')
+        interface = os.listdir(upper)[0]
+        with open(os.path.join(upper, interface, 'speed')) as file:
+            return int(_sysstrip(file.read()))
+
+    @property
+    def interfaces(self):
+        """Returns dict of associated network interfaces key being name of
+        interface and value interface objec.
+        """
+        res = dict()
+        netpath = os.path.join(self._syspath, 'net')
+        for link in os.listdir(netpath):
+            res[link] = network.Interface(link, os.path.join(netpath, link))
+        return res
 
     @property
     def switch(self):
@@ -85,57 +105,49 @@ class _Ethernet:
 
     def _all(self, res):
         eth = dict()
-        eth['hwaddr'] = self.hwaddr
         eth['speed'] = self.speed
-        res[self.name] = eth
+        eth['net'] = []
+        for link in self.interfaces:
+            eth['net'].append(link)
+        eth['paired'] = self.paired
+        if self.paired:
+            eth['another'] = self.another
+        res[self.dev_id] = eth
 
 
-class _Switch:
-    """
-    Ethernet switch representation.
+class Switch:
+    """Ethernet switch representation.
     """
     def __init__(self):
         pass
 
 
 def all_sockets():
-    """
-    Returns list of all ethernet sockets managed by Turris router.
+    """Returns list of all ethernet sockets managed by Turris router.
     """
     return []
 
 
 def cpu_sockets():
+    """Returns dictionary of CPU ethernet sockets where keys are ethernet
+    socket identifiers and values are objects representing ethernet sockets.
     """
-    Returns list of CPU ethernet sockets.
-    """
-    lst = []
-
-    def _ifether(reg, subpath):
+    res = dict()
+    psoc = _path_soc()
+    for reg in os.listdir(psoc):
         if reg.endswith('.ethernet'):
-            name = os.listdir(subpath)[0]
-            lst.append(_Ethernet(name, os.path.join(subpath, name)))
-
-    if os.path.isdir(__P_SOC_INTERNAL_REGS__):
-        for reg in os.listdir(__P_SOC_INTERNAL_REGS__):
-            _ifether(reg, os.path.join(__P_SOC_INTERNAL_REGS__, reg, 'net'))
-    else:
-        soc = next(dv for dv in os.listdir(__P_SYS_PLATFORM__)
-                   if dv.startswith('soc@'))
-        soc_path = os.path.join(__P_SYS_PLATFORM__, soc)
-        for reg in os.listdir(soc_path):
-            _ifether(reg, os.path.join(soc_path, reg, 'net'))
-    return lst
+            eth = Ethernet(os.path.join(psoc, reg))
+            res[eth.dev_id] = eth
+    return res
 
 
 def switches():
-    """
-    Returns list of all switch chips configurable from Turris router.
+    """Returns list of all switch chips configurable from Turris router.
     """
     return []
 
 
 def _all(res):
     res['ethernet'] = dict()
-    for eth in cpu_sockets():
+    for _, eth in cpu_sockets().items():
         eth._all(res['ethernet'])

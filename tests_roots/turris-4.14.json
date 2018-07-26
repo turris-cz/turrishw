@@ -1,0 +1,70 @@
+{
+  "name": "Turris", 
+  "serial": 34359738380, 
+  "memory": 2069,
+  "ethernet": {
+    "ffe24000.ethernet": {
+	  "paired": false,
+	  "speed": 1000,
+      "net": [
+        "eth0"
+      ]
+    },
+    "ffe25000.ethernet": {
+	  "paired": false,
+	  "speed": 1000,
+      "net": [
+        "eth1"
+      ]
+    },
+    "ffe26000.ethernet": {
+	  "paired": false,
+	  "speed": 1000,
+      "net": [
+        "eth2"
+      ]
+    }
+  },
+  "net": {
+    "lo": {
+      "type": "unknown", 
+      "virtual": true
+    }, 
+    "eth0": {
+      "virtual": false,
+      "type": "Ethernet",
+      "hwaddr": "d8:58:d7:00:0c:ed", 
+	  "device": "ffe24000.ethernet"
+    },
+    "eth1": {
+      "virtual": false,
+      "type": "Ethernet", 
+      "hwaddr": "d8:58:d7:00:0c:ee", 
+	  "device": "ffe25000.ethernet"
+    }, 
+    "eth2": {
+      "virtual": false,
+      "type": "Ethernet", 
+      "hwaddr": "d8:58:d7:00:0c:ef", 
+	  "device": "ffe26000.ethernet"
+    }, 
+    "wlan0": {
+      "virtual": false,
+      "type": "Wifi", 
+      "hwaddr": "04:f0:21:24:01:e7", 
+	  "device": "9000:03:00.0.wifi"
+    }, 
+    "br-lan": {
+      "virtual": true,
+      "type": "unknown"
+    },
+    "ifb1": {
+      "virtual": true,
+      "type": "unknown"
+    },
+    "ifb0": {
+      "virtual": true,
+      "type": "unknown"
+    }
+  }
+}

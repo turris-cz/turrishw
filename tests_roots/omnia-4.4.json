@@ -1,0 +1,100 @@
+{
+  "name": "Turris Omnia",
+  "serial": 42949673426,
+  "memory": 2070,
+  "ethernet": {
+    "f1030000.ethernet": {
+	  "paired": false,
+	  "speed": 1000,
+      "net": [
+        "eth0"
+      ]
+    },
+    "f1034000.ethernet": {
+	  "paired": false,
+	  "speed": 1000,
+      "net": [
+        "eth1"
+      ]
+    },
+    "f1070000.ethernet": {
+	  "paired": false,
+	  "speed": 1000,
+      "net": [
+        "eth2"
+      ]
+    }
+  },
+  "net": {
+    "lo": {
+      "virtual": true,
+      "type": "unknown"
+    },
+    "eth0": {
+      "virtual": false,
+      "type": "Ethernet",
+      "hwaddr": "d8:58:d7:00:1a:1c",
+	  "device": "f1030000.ethernet"
+    },
+    "eth1": {
+      "virtual": false,
+      "type": "Ethernet",
+      "hwaddr": "d8:58:d7:00:1a:1d",
+	  "device": "f1034000.ethernet"
+    },
+    "eth2": {
+      "virtual": false,
+      "type": "Ethernet",
+      "hwaddr": "d8:58:d7:00:1a:1e",
+	  "device": "f1070000.ethernet"
+    },
+    "wlan0": {
+      "virtual": false,
+      "type": "Wifi",
+      "hwaddr": "04:f0:21:1c:b7:52",
+	  "device": "0000:02:00.0.wifi"
+    },
+    "wlan1": {
+      "virtual": false,
+      "type": "Wifi",
+      "hwaddr": "48:a9:d2:62:ef:75",
+	  "device": "0000:01:00.0.wifi"
+    },
+    "br-lan": {
+      "virtual": true,
+      "type": "unknown"
+    },
+    "tun_turris": {
+      "virtual": true,
+      "type": "unknown"
+    },
+    "gretap0": {
+      "virtual": true,
+      "type": "unknown"
+    },
+    "sit0": {
+      "virtual": true,
+      "type": "unknown"
+    },
+    "ip6tnl0": {
+      "virtual": true,
+      "type": "unknown"
+    },
+    "gre0": {
+      "virtual": true,
+      "type": "unknown"
+    },
+    "ifb0": {
+      "virtual": true,
+      "type": "unknown"
+    },
+    "ifb1": {
+      "virtual": true,
+      "type": "unknown"
+    },
+    "teql0": {
+      "virtual": true,
+      "type": "unknown"
+    }
+  }
+}

@@ -22,7 +22,7 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 # EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-from . import board, ethernet
+from . import board, ethernet, network
 
 
 def get_all():
@@ -33,4 +33,5 @@ def get_all():
     if board.supported():
         board._all(res)
         ethernet._all(res)
+        network._all(res)
     return res
