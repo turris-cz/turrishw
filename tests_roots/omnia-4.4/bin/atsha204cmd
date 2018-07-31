@@ -1,5 +1,4 @@
 #!/bin/sh
-if [ "$1" != "serial-number" ]; then
-	exit 1
-fi
+set -e
+[ "$1" = "serial-number" ]
 echo 0000000A000001D2
