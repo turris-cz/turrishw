@@ -81,4 +81,4 @@ show_all() {
 	echo "	ports: 4 6 "
 }
 
-. "$(dirname $(readlink -f "$0"))/../../swconfig.common"
+. "$(dirname $(readlink -f "$0"))/../../swconfig.common.sh"
