@@ -9,7 +9,7 @@ python2:
     - pip install .
     - export LD_LIBRARY_PATH=/usr/local/lib
   script:
-    - python -m pytest tests
+    - python -m pytest -vv tests
 
 python3:
   stage: test
@@ -17,4 +17,4 @@ python3:
     - pip3 install .
     - export LD_LIBRARY_PATH=/usr/local/lib
   script:
-    - python3 -m pytest tests
+    - python3 -m pytest -vv tests
