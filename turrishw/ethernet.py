@@ -223,11 +223,9 @@ class Switch(device.Device):
 
     def _all(self, res):
         switch = dict()
-        switch['ports'] = []
+        switch['ports'] = dict()
         for _, sock in self.ports().items():
-            eth = dict()
-            sock._all(eth)
-            switch['ports'].append(eth)
+            sock._all(switch['ports'])
         res[self.dev_id()] = switch
 
 

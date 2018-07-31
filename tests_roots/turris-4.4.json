@@ -33,66 +33,52 @@
     },
     "switch": {
       "swconfig-switch0": {
-        "ports": [
-          {
-            "swconfig-switch0-0": {
-              "paired": true,
-              "another": "ffe25000.ethernet",
-              "plugged": true,
-              "speed": "1000",
-              "net": []
-            }
+        "ports": {
+          "swconfig-switch0-0": {
+            "paired": true,
+            "another": "ffe25000.ethernet",
+            "plugged": true,
+            "speed": "1000",
+            "net": []
           },
-          {
-            "swconfig-switch0-1": {
-              "paired": false,
-              "plugged": false,
-              "speed": "1000",
-              "net": []
-            }
+          "swconfig-switch0-1": {
+            "paired": false,
+            "plugged": false,
+            "speed": "1000",
+            "net": []
           },
-          {
-            "swconfig-switch0-2": {
-              "paired": false,
-              "plugged": false,
-              "speed": "1000",
-              "net": []
-            }
+          "swconfig-switch0-2": {
+            "paired": false,
+            "plugged": false,
+            "speed": "1000",
+            "net": []
           },
-          {
-            "swconfig-switch0-3": {
-              "paired": false,
-              "plugged": true,
-              "speed": "1000",
-              "net": []
-            }
+          "swconfig-switch0-3": {
+            "paired": false,
+            "plugged": true,
+            "speed": "1000",
+            "net": []
           },
-          {
-            "swconfig-switch0-4": {
-              "paired": false,
-              "plugged": false,
-              "speed": "1000",
-              "net": []
-            }
+          "swconfig-switch0-4": {
+            "paired": false,
+            "plugged": false,
+            "speed": "1000",
+            "net": []
           },
-          {
-            "swconfig-switch0-5": {
-              "paired": false,
-              "plugged": false,
-              "speed": "1000",
-              "net": []
-            }
+          "swconfig-switch0-5": {
+            "paired": false,
+            "plugged": false,
+            "speed": "1000",
+            "net": []
           },
-          {
-            "swconfig-switch0-6": {
-              "paired": true,
-              "another": "ffe26000.ethernet",
-              "plugged": true,
-              "speed": "1000",
-              "net": []
-            }
+          "swconfig-switch0-6": {
+            "paired": true,
+            "another": "ffe26000.ethernet",
+            "plugged": true,
+            "speed": "1000",
+            "net": []
           }
-        ]
+        }
       }
     }
   },
