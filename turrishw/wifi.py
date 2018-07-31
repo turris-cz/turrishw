@@ -23,9 +23,10 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 # EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 import os
+from . import device
 
 
-class Wifi:
+class Wifi(device.Device):
     """Wifi adapter representation.
     """
     def __init__(self, syspath):
@@ -47,7 +48,6 @@ class Wifi:
             os.path.isdir(os.path.join(syspath, 'net')) and \
             os.path.isdir(os.path.join(syspath, 'ieee80211'))
 
-    @property
     def dev_id(self):
         """Returns Wifi adapter unique identifier.
         """

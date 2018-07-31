@@ -73,6 +73,7 @@ def memory():
     with open(__P_PROC_MEMINFO__) as file:
         total_l = file.readline()  # Total amount should be on first line
     assert total_l.startswith('MemTotal:')
+    # TODO check that it was returned in kB
     # TODO round to more common 2^n number?
     return int(total_l.split()[1])//1000
 

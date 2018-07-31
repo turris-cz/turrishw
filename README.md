@@ -7,6 +7,11 @@ Most of the library is written to be as general as possible but there are some
 parts that are hard coded depending on board as there is no way to detect some
 required informations.
 
+This library only maps hardware level of Turris router. To access additional
+information about router you can use other Python libraries. These are suggested
+libraries for specific use cases:
+* Network: pyroute2
+
 Dependencies
 ------------
 * Python2 or Python3 required for run

@@ -3,27 +3,98 @@
   "serial": 42949673426,
   "memory": 2070,
   "ethernet": {
-    "f1030000.ethernet": {
-	  "paired": false,
-	  "speed": 1000,
-      "net": [
-        "eth0"
-      ]
-    },
-    "f1034000.ethernet": {
-	  "paired": false,
-	  "speed": 1000,
-      "net": [
-        "eth1"
-      ]
-    },
-    "f1070000.ethernet": {
-	  "paired": false,
-	  "speed": 1000,
-      "net": [
-        "eth2"
-      ]
-    }
+	"cpu": {
+      "f1030000.ethernet": {
+  	  "paired": true,
+  	  "another": "swconfig-switch0-5",
+  	  "plugged": true,
+  	  "speed": 1000,
+        "net": [
+          "eth0"
+        ]
+      },
+      "f1034000.ethernet": {
+  	  "paired": false,
+  	  "plugged": true,
+  	  "speed": 1000,
+        "net": [
+          "eth1"
+        ]
+      },
+      "f1070000.ethernet": {
+  	  "paired": true,
+  	  "another": "swconfig-switch0-6",
+  	  "plugged": true,
+  	  "speed": 1000,
+        "net": [
+          "eth2"
+        ]
+      }
+	},
+	"switch": {
+	  "swconfig-switch0": {
+        "ports": [
+          {
+            "swconfig-switch0-0": {
+              "paired": false,
+              "plugged": false,
+              "speed": "1000",
+              "net": []
+            }
+          },
+          {
+            "swconfig-switch0-1": {
+              "paired": false,
+              "plugged": false,
+              "speed": "1000",
+              "net": []
+            }
+          },
+          {
+            "swconfig-switch0-2": {
+              "paired": false,
+              "plugged": false,
+              "speed": "1000",
+              "net": []
+            }
+          },
+          {
+            "swconfig-switch0-3": {
+              "paired": false,
+              "plugged": false,
+              "speed": "1000",
+              "net": []
+            }
+          },
+          {
+            "swconfig-switch0-4": {
+              "paired": false,
+              "plugged": true,
+              "speed": "1000",
+              "net": []
+            }
+          },
+          {
+            "swconfig-switch0-5": {
+              "paired": true,
+              "another": "f1030000.ethernet",
+              "plugged": true,
+              "speed": "1000",
+              "net": []
+            }
+          },
+          {
+            "swconfig-switch0-6": {
+              "paired": true,
+              "another": "f1070000.ethernet",
+              "speed": "1000",
+              "plugged": true,
+              "net": []
+            }
+          }
+        ]
+      }
+	}
   },
   "net": {
     "lo": {

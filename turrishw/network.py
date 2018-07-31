@@ -35,53 +35,48 @@ class Interface:
         self._name = name
         self._syspath = syspath
 
-    @property
     def name(self):
         """Name of network interface.
         """
         return self._name
 
-    @property
     def hwaddr(self):
         """Hardware address (MAC address)
         """
         with open(os.path.join(self._syspath, 'address')) as file:
             return _sysstrip(file.read())
 
-    @property
     def type(self):
         """Returns string representing type of network interface. This is just
         limited detection and can return following strings:
           "ethernet" in case of ethernet
           "unknown" in all other cases
         """
-        if not self.virtual:
-            return self.device.dev_type()
+        if not self.virtual():
+            return self.device().dev_type()
         return "unknown"
 
-    @property
     def virtual(self):
         """Returns True if this interface is virtual. False is returned if
         there is some device associated with this interface.
         """
         return not os.path.islink(os.path.join(self._syspath, 'device'))
 
-    @property
     def device(self):
         """Returns device associated with this network interface.
         """
-        if not self.virtual:
+        if not self.virtual():
             from .device import sys_device
             return sys_device(os.path.join(self._syspath, 'device'))
         return None
 
     def _all(self, res):
         inter = dict()
-        inter['type'] = self.type
-        inter['virtual'] = self.virtual
-        if not self.virtual:
-            inter['device'] = self.device.dev_id
-            inter['hwaddr'] = self.hwaddr
+        inter['type'] = self.type()
+        inter['virtual'] = self.virtual()
+        if not self.virtual():
+            inter['device'] = self.device().dev_id()
+            inter['hwaddr'] = self.hwaddr()
         res[self._name] = inter
 
 

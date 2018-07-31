@@ -1,0 +1,84 @@
+#!/bin/sh
+set -e
+
+list() {
+	echo "Found: switch0 - 10.mvsw61xx"
+}
+
+show_port() {
+	case "$1" in
+		0)
+			echo "Port 0:"
+			echo "	mask: 0x0000: (0) "
+			echo "	qmode: 3"
+			echo "	pvid: 1"
+			echo "	link: port:0 link:down"
+			;;
+		1)
+			echo "Port 1:"
+			echo "	mask: 0x0000: (1) "
+			echo "	qmode: 3"
+			echo "	pvid: 1"
+			echo "	link: port:1 link:down"
+			;;
+		2)
+			echo "Port 2:"
+			echo "	mask: 0x0000: (2) "
+			echo "	qmode: 3"
+			echo "	pvid: 1"
+			echo "	link: port:2 link:down"
+			;;
+		3)
+			echo "Port 3:"
+			echo "	mask: 0x0000: (3) "
+			echo "	qmode: 3"
+			echo "	pvid: 1"
+			echo "	link: port:3 link:down"
+			;;
+		4)
+			echo "Port 4:"
+			echo "	mask: 0x0000: (4) "
+			echo "	qmode: 3"
+			echo "	pvid: 2"
+			echo "	link: port:4 link:up speed:1000baseT full-duplex "
+			;;
+		5)
+			echo "Port 5:"
+			echo "	mask: 0x0000: (5) "
+			echo "	qmode: 3"
+			echo "	pvid: 1"
+			echo "	link: port:5 link:up speed:1000baseT full-duplex "
+			;;
+		6)
+			echo "Port 6:"
+			echo "	mask: 0x0000: (6) "
+			echo "	qmode: 3"
+			echo "	pvid: 2"
+			echo "	link: port:6 link:up speed:1000baseT full-duplex "
+			;;
+		*)
+			exit 1
+	esac
+}
+
+show_all() {
+	echo "Global attributes:"
+	echo "	enable_vlan: 1"
+	show_port 0
+	show_port 1
+	show_port 2
+	show_port 3
+	show_port 4
+	show_port 5
+	show_port 6
+	echo "VLAN 1:"
+	echo "	port_based: 0"
+	echo "	vid: 1"
+	echo "	ports: 0 1 2 3 5 "
+	echo "VLAN 2:"
+	echo "	port_based: 0"
+	echo "	vid: 2"
+	echo "	ports: 4 6 "
+}
+
+. "$(dirname $(readlink -f "$0"))/../../swconfig.common"

@@ -1,5 +1,1 @@
-#!/bin/sh
-if [ "$1" != "serial-number" ]; then
-	exit 1
-fi
-echo 000000080000000C
+../../turris-4.4/bin/atsha204cmd

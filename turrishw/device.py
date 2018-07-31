@@ -22,23 +22,37 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 # EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-from . import ethernet, wifi
 
 
-def lookup(dev_id):
-    """Lookup device object using unique dev_id used in TurrisHW library. If
-    dev_id is invalid or there is no such device then None is returned.
+class Device():
+    """Abstract base class for all devices.
     """
-    # TODO
-    return None
+    @staticmethod
+    def dev_type():
+        """Common device function returning device type as a string.
+        """
+        raise NotImplementedError()
+
+    @staticmethod
+    def syspath_is(syspath):
+        """Common identification function of devices. It returns True if
+        syspath points to this type device. Otherwise returns False.
+        """
+        raise NotImplementedError()
+
+    def dev_id(self):
+        """Returns unique device id.
+        """
+        raise NotImplementedError()
 
 
 def sys_device(syspath):
     """Identify and return specific device representation. It path is not
     device or given device is not supported then None is returned.
     """
-    if ethernet.Ethernet.syspath_is(syspath):
-        return ethernet.Ethernet(syspath)
+    from . import ethernet, wifi
+    if ethernet.EthernetCPU.syspath_is(syspath):
+        return ethernet.EthernetCPU(syspath)
     if wifi.Wifi.syspath_is(syspath):
         return wifi.Wifi(syspath)
     return None
