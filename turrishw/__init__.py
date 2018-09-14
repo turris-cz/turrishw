@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # Copyright (c) 2018, CZ.NIC, z.s.p.o. (http://www.nic.cz/)
 # All rights reserved.
 #
@@ -22,16 +23,31 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 # EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-from . import board, ethernet, network
+
+import os
+import pprint
+
+__P_ROOT__ = "/"
+
+def get_model():
+    model = open(__P_ROOT__ + 'sys/firmware/devicetree/base/model', 'r').read()
+    if "Mox" in model:
+        return "MOX"
+    elif "Omnia" in model:
+        return "OMNIA"
+    elif "Turris":
+        return "TURRIS"
+    else:
+        return ""
 
 
-def get_all():
-    """
-    Returns full Turris hardware detected representation.
-    """
-    res = {'name': 'unknown'}
-    if board.supported():
-        board._all(res)
-        ethernet._all(res)
-        network._all(res)
-    return res
+def get_ifaces():
+    from . import mox, omnia
+    model = get_model()
+    if model == "MOX":
+        return mox.get_interfaces()
+    if model == "OMNIA":
+        return omnia.get_interfaces()
+    else:
+        print("unsupported model")
+        return {}

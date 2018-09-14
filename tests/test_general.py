@@ -17,59 +17,28 @@
 import pytest
 import os
 import json
-from types import ModuleType
 import turrishw as thw
 
 
 # TODO mox-4.14
 @pytest.fixture(params=[
-    "turris-4.4",
-    "turris-4.14",
-    "omnia-4.4",
+    "mox+C",
+    "mox+EEC",
+    "omnia-4.0",
     ])
 def set_root(request):
+    print("AAAA")
     root = request.param
-    testdir = os.path.join(os.getcwd(), 'tests_roots')
-
-    assert thw.board.__P_MODEL__ == "/sys/firmware/devicetree/base/model"
-    orig_vals = dict()
-
-    # First redirect all paths to our root and setup PATH
-    # This works only if every module has uniq name
-    def _update(mod):
-        if mod.__name__ in orig_vals:
-            return  # Skip processed module
-        orig_vals[mod.__name__] = dict()
-        for name in dir(mod):
-            if isinstance(getattr(mod, name), ModuleType):
-                _update(getattr(mod, name))
-            elif name.startswith('__P_'):
-                cur = getattr(mod, name)
-                orig_vals[mod.__name__][name] = cur
-                setattr(mod, name,
-                        os.path.join(testdir, root, cur.lstrip('/')))
-
-    _update(thw)
-    processed_mod = set()
-    orig_path = os.environ['PATH']
-    os.environ['PATH'] = \
-        os.path.join(testdir, root, "bin") + ":" + os.environ['PATH']
+    testdir = os.path.join(os.getcwd(), '../tests_roots')
+    orig_root = thw.__P_ROOT__
+    print(root)
+    thw.__P_ROOT__ = os.path.join(testdir, root) + "/"
 
     yield os.path.join(testdir, root + '.json')
 
-    # Restore all modified paths and PATH environment variable
-    def _restore(mod):
-        for name in dir(mod):
-            if isinstance(getattr(mod, name), ModuleType):
-                if name not in processed_mod:
-                    processed_mod.add(name)
-                    _restore(getattr(mod, name))
-            elif name.startswith('__P_'):
-                setattr(mod, name, orig_vals[mod.__name__][name])
-    _restore(thw)
-    os.environ['PATH'] = orig_path
+    thw.__P_ROOT__ = orig_root
 
 
 def test_all(set_root):
     with open(set_root) as file:
-        assert json.load(file) == thw.get_all()
+        assert json.load(file) == thw.get_ifaces()

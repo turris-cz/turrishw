@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # Copyright (c) 2018, CZ.NIC, z.s.p.o. (http://www.nic.cz/)
 # All rights reserved.
 #
@@ -22,37 +23,15 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 # EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+import os
+from . import _utils
 
-
-class Device():
-    """Abstract base class for all devices.
-    """
-    @staticmethod
-    def dev_type():
-        """Common device function returning device type as a string.
-        """
-        raise NotImplementedError()
-
-    @staticmethod
-    def syspath_is(syspath):
-        """Common identification function of devices. It returns True if
-        syspath points to this type device. Otherwise returns False.
-        """
-        raise NotImplementedError()
-
-    def dev_id(self):
-        """Returns unique device id.
-        """
-        raise NotImplementedError()
-
-
-def sys_device(syspath):
-    """Identify and return specific device representation. It path is not
-    device or given device is not supported then None is returned.
-    """
-    from . import ethernet, wifi
-    if ethernet.EthernetCPU.syspath_is(syspath):
-        return ethernet.EthernetCPU(syspath)
-    if wifi.Wifi.syspath_is(syspath):
-        return wifi.Wifi(syspath)
-    return None
+def get_interfaces():
+    ifaces = {}
+    _utils.iface_append(ifaces, "eth2", "WAN")
+    _utils.iface_append(ifaces, "lan0", "LAN0")
+    _utils.iface_append(ifaces, "lan1", "LAN1")
+    _utils.iface_append(ifaces, "lan2", "LAN2")
+    _utils.iface_append(ifaces, "lan3", "LAN3")
+    _utils.iface_append(ifaces, "lan4", "LAN4")
+    return ifaces

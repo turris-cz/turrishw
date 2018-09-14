@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # Copyright (c) 2018, CZ.NIC, z.s.p.o. (http://www.nic.cz/)
 # All rights reserved.
 #
@@ -22,27 +23,25 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 # EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-import os
-import string
 
-__P_SYS_PLATFORM__ = '/sys/devices/platform'
+from turrishw import __P_ROOT__
 
-
-def sysstrip(sysstr):
-    """
-    Strip not only white characters but also \0.
-    """
-    return sysstr.strip(string.whitespace + '\0')
+def get_iface_state(iface):
+    operstate = open(__P_ROOT__ + 'sys/class/net/{}/operstate'.format(iface), 'r').read()
+    if operstate[:-1] == "up":
+        return "up"
+    else:
+        return "down"
 
 
-def path_soc():
-    """
-    Returns /sys path to SOC
-    """
-    intregs = os.path.join(__P_SYS_PLATFORM__, 'soc/soc:internal-regs')
-    if os.path.isdir(intregs):  # Probably SOC on PowerPC
-        return intregs
-    # Probably SOC on ARM
-    return next(
-        os.path.join(__P_SYS_PLATFORM__, dv)
-        for dv in os.listdir(__P_SYS_PLATFORM__) if dv.startswith('soc@'))
+def get_iface_speed(iface):
+    try:
+        speed = open(__P_ROOT__ + 'sys/class/net/{}/speed'.format(iface), 'r').read()
+        return int(speed)
+    except Exception:
+        return 0
+
+
+def iface_append(ifaces, iface, desc):
+    ifaces[iface] = {"description": desc, "state": get_iface_state(iface),
+                     "link_speed": get_iface_speed(iface)}
