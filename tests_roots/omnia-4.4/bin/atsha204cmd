@@ -1,4 +1,0 @@
-#!/bin/sh
-set -e
-[ "$1" = "serial-number" ]
-echo 0000000A000001D2
