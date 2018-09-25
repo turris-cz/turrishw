@@ -1,0 +1,1 @@
+{"eth0": {"description": "E0", "state": "down", "link_speed": 1000}, "lan1": {"description": "E1-1", "state": "down", "link_speed": 0}, "lan2": {"description": "E1-2", "state": "down", "link_speed": 0}, "lan3": {"description": "E1-3", "state": "down", "link_speed": 0}, "lan4": {"description": "E1-4", "state": "down", "link_speed": 0}}
