@@ -24,9 +24,8 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 # EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from turrishw import __P_ROOT__
-
 def get_iface_state(iface):
+    from turrishw import __P_ROOT__
     operstate = open(__P_ROOT__ + 'sys/class/net/{}/operstate'.format(iface), 'r').read()
     if operstate[:-1] == "up":
         return "up"
@@ -35,6 +34,7 @@ def get_iface_state(iface):
 
 
 def get_iface_speed(iface):
+    from turrishw import __P_ROOT__
     try:
         speed = open(__P_ROOT__ + 'sys/class/net/{}/speed'.format(iface), 'r').read()
         return int(speed)

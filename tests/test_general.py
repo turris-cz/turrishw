@@ -27,12 +27,12 @@ import turrishw as thw
     "omnia-4.0",
     ])
 def set_root(request):
-    print("AAAA")
     root = request.param
-    testdir = os.path.join(os.getcwd(), '../tests_roots')
+    testdir = os.path.join(os.getcwd(), 'tests_roots')
     orig_root = thw.__P_ROOT__
-    print(root)
-    thw.__P_ROOT__ = os.path.join(testdir, root) + "/"
+    newroot = os.path.join(testdir, root) + "/"
+    print(newroot)
+    thw.__P_ROOT__ = newroot
 
     yield os.path.join(testdir, root + '.json')
 

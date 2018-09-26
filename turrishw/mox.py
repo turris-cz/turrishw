@@ -24,10 +24,10 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 # EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 import os
-from turrishw import __P_ROOT__
 from . import _utils
 
 def _get_modules():
+    from turrishw import __P_ROOT__
     return os.listdir(__P_ROOT__+'sys/bus/moxtet/devices')
 
 
