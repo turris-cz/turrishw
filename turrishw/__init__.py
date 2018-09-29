@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # Copyright (c) 2018, CZ.NIC, z.s.p.o. (http://www.nic.cz/)
 # All rights reserved.
 #
@@ -26,11 +25,12 @@
 
 import os
 import pprint
+from . import utils
 
 __P_ROOT__ = "/"
 
 def get_model():
-    model = open(__P_ROOT__ + 'sys/firmware/devicetree/base/model', 'r').read()
+    model = open(os.path.join(__P_ROOT__, 'sys/firmware/devicetree/base/model'), 'r').read()
     if "Mox" in model:
         return "MOX"
     elif "Omnia" in model:
@@ -44,10 +44,12 @@ def get_model():
 def get_ifaces():
     from . import mox, omnia
     model = get_model()
+    ifaces = []
     if model == "MOX":
-        return mox.get_interfaces()
+        ifaces = mox.get_interfaces()
     if model == "OMNIA":
-        return omnia.get_interfaces()
+        ifaces = omnia.get_interfaces()
     else:
         print("unsupported model")
-        return {}
+    return utils.ifaces_array2dict(ifaces)
+    

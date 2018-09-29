@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # Copyright (c) 2018, CZ.NIC, z.s.p.o. (http://www.nic.cz/)
 # All rights reserved.
 #
@@ -24,16 +23,16 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 # EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 import os
-from . import _utils
+from . import utils
+from turrishw import __P_ROOT__
 
 def _get_modules():
-    from turrishw import __P_ROOT__
-    return os.listdir(__P_ROOT__+'sys/bus/moxtet/devices')
+    return os.listdir(os.path.join(__P_ROOT__, 'sys/bus/moxtet/devices'))
 
 
 def get_interfaces():
-    ifaces = {}
-    _utils.iface_append(ifaces, "eth0", "E0")
+    ifaces = []
+    ifaces.append(utils.iface_info("eth0", "E0"))
     modules = _get_modules()
     peridot_cnt = sum(1 for m in modules if "peridot" in m)
     topaz_cnt = sum(1 for m in modules if "topaz" in m)
@@ -41,11 +40,11 @@ def get_interfaces():
     sfp_cnt = sum(1 for m in modules if "sfp" in m)
     if peridot_cnt == 0:
         if sfp_cnt == 1:
-            _utils.iface_append(ifaces, "eth1", "SFP port")
+            ifaces.append(utils.iface_info("eth1", "SPF"))
     else:
         if sfp_cnt == 1:
-            _utils.iface_append(ifaces, "sfp", "SFP port")
+            ifaces.append(utils.iface_info("spf", "SPF"))
     for i in range(ports_num):
-        _utils.iface_append(ifaces, "lan{}".format(i + 1),
-                     "E{}-{}".format(int(i/4) + 1, i % 4 + 1))
+        ifaces.append(utils.iface_info("lan{}".format(i + 1), 
+                                        "E{}-{}".format(int(i/4) + 1, i % 4 + 1)))
     return ifaces

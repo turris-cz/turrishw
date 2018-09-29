@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # Copyright (c) 2018, CZ.NIC, z.s.p.o. (http://www.nic.cz/)
 # All rights reserved.
 #
@@ -24,14 +23,14 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 # EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 import os
-from . import _utils
+from . import utils
 
 def get_interfaces():
-    ifaces = {}
-    _utils.iface_append(ifaces, "eth2", "WAN")
-    _utils.iface_append(ifaces, "lan0", "LAN0")
-    _utils.iface_append(ifaces, "lan1", "LAN1")
-    _utils.iface_append(ifaces, "lan2", "LAN2")
-    _utils.iface_append(ifaces, "lan3", "LAN3")
-    _utils.iface_append(ifaces, "lan4", "LAN4")
+    ifaces = []
+    ifaces.append(utils.iface_info("eth2", "WAN"))
+    ifaces.append(utils.iface_info("lan0", "LAN0"))
+    ifaces.append(utils.iface_info("lan1", "LAN1"))
+    ifaces.append(utils.iface_info("lan2", "LAN2"))
+    ifaces.append(utils.iface_info("lan3", "LAN3"))
+    ifaces.append(utils.iface_info("lan4", "LAN4"))
     return ifaces

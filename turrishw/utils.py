@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # Copyright (c) 2018, CZ.NIC, z.s.p.o. (http://www.nic.cz/)
 # All rights reserved.
 #
@@ -23,25 +22,34 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 # EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+import os
+
 
 def get_iface_state(iface):
     from turrishw import __P_ROOT__
-    operstate = open(__P_ROOT__ + 'sys/class/net/{}/operstate'.format(iface), 'r').read()
-    if operstate[:-1] == "up":
-        return "up"
-    else:
-        return "down"
+    with open(os.path.join(__P_ROOT__, 'sys/class/net/{}/operstate'.format(iface)), 'r') as f:
+        operstate = f.read()
+        if operstate[:-1] == "up":
+            return "up"
+        else:
+            return "down"
 
 
 def get_iface_speed(iface):
     from turrishw import __P_ROOT__
-    try:
-        speed = open(__P_ROOT__ + 'sys/class/net/{}/speed'.format(iface), 'r').read()
+    with open(os.path.join(__P_ROOT__, 'sys/class/net/{}/speed'.format(iface)), 'r') as f:
+        speed = f.read()
         return int(speed)
-    except Exception:
-        return 0
 
 
-def iface_append(ifaces, iface, desc):
-    ifaces[iface] = {"description": desc, "state": get_iface_state(iface),
-                     "link_speed": get_iface_speed(iface)}
+def iface_info(iface, desc):
+    return {"name": iface, "description": desc, "state": get_iface_state(iface),
+            "link_speed": get_iface_speed(iface)}
+
+
+def ifaces_array2dict(ifaces_array):
+    d = {}
+    for iface in ifaces_array:
+        name = iface["name"]
+        d[name] = {i:iface[i] for i in iface if i!='name'}
+    return d
