@@ -27,7 +27,7 @@ import os
 import pprint
 from . import utils
 
-__P_ROOT__ = "/"
+__P_ROOT__ = os.getenv("TURRISHW_ROOT", default="/")
 
 def get_model():
     model = open(os.path.join(__P_ROOT__, 'sys/firmware/devicetree/base/model'), 'r').read()
