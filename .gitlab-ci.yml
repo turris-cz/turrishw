@@ -6,6 +6,7 @@ stages:
 python2:
   stage: test
   before_script:
+    - pip install --upgrade pytest
     - pip install .
     - export LD_LIBRARY_PATH=/usr/local/lib
   script:
@@ -14,6 +15,7 @@ python2:
 python3:
   stage: test
   before_script:
+    - pip3 install --upgrade pytest
     - pip3 install .
     - export LD_LIBRARY_PATH=/usr/local/lib
   script:
