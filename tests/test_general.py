@@ -17,10 +17,7 @@
 import pytest
 import os
 import json
-import shutil
 
-tmpdir = "/tmp/turrishw-tests"
-os.environ["TURRISHW_ROOT"] = tmpdir
 
 import turrishw as thw
 
@@ -30,17 +27,14 @@ import turrishw as thw
     "mox+EEC",
     "omnia-4.0",
     ])
-def set_root(request):
+def set_root(request, monkeypatch):
     root = request.param
     testdir = os.path.join(os.getcwd(), 'tests_roots')
     testroot = os.path.join(testdir, root)
-    os.system("cp -r --no-preserve=mode,ownership " + testroot + " " + tmpdir)
-
-    yield os.path.join(testdir, root + '.json')
-
-    os.system("rm -rf " + tmpdir)
-
-
+    with monkeypatch.context() as m:
+        m.setattr("turrishw.__P_ROOT__", testroot)
+        m.setattr("turrishw.mox.__P_ROOT__", testroot)
+        yield os.path.join(testdir, root + '.json')
 
 
 def test_all(set_root):
