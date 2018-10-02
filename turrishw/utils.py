@@ -43,8 +43,9 @@ def get_iface_speed(iface):
 
 
 def iface_info(iface, desc):
-    return {"name": iface, "description": desc, "state": get_iface_state(iface),
-            "link_speed": get_iface_speed(iface)}
+    state = get_iface_state(iface)
+    return {"name": iface, "description": desc, "state": state,
+            "link_speed": get_iface_speed(iface) if state == "up" else 0}
 
 
 def ifaces_array2dict(ifaces_array):
