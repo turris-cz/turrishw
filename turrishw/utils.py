@@ -28,8 +28,8 @@ import os
 def get_iface_state(iface):
     from turrishw import __P_ROOT__
     with open(os.path.join(__P_ROOT__, 'sys/class/net/{}/operstate'.format(iface)), 'r') as f:
-        operstate = f.read()
-        if operstate[:-1] == "up":
+        operstate = f.readline()
+        if operstate.strip() == "up":
             return "up"
         else:
             return "down"

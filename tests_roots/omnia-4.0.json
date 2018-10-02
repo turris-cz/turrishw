@@ -21,8 +21,8 @@
 	},
 	"lan3": {
 		"description": "LAN3",
-		"link_speed": 0,
-		"state": "down"
+		"link_speed": 1000,
+		"state": "up"
 	},
 	"lan4": {
 		"description": "LAN4",
