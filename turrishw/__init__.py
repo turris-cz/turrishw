@@ -47,7 +47,7 @@ def get_ifaces():
     ifaces = []
     if model == "MOX":
         ifaces = mox.get_interfaces()
-    if model == "OMNIA":
+    elif model == "OMNIA":
         ifaces = omnia.get_interfaces()
     else:
         print("unsupported model")
