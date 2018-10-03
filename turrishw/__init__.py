@@ -24,8 +24,12 @@
 # EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
-import pprint
+import logging
 from . import utils
+
+
+logger = logging.getLogger("turrishw")
+
 
 __P_ROOT__ = os.getenv("TURRISHW_ROOT", default="/")
 
@@ -52,8 +56,8 @@ def get_ifaces():
         if major_version >= 4:
             ifaces = omnia.get_interfaces()
         else:
-            print("unsupported TOs version")
+            logger.warning("unsupported TOS version (on omnia): %d", major_version)
     else:
-        print("unsupported model")
+        logger.warning("unsupported model: %s", model)
     return utils.ifaces_array2dict(ifaces)
     
