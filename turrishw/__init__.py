@@ -30,15 +30,16 @@ from . import utils
 __P_ROOT__ = os.getenv("TURRISHW_ROOT", default="/")
 
 def get_model():
-    model = open(os.path.join(__P_ROOT__, 'sys/firmware/devicetree/base/model'), 'r').read()
-    if "Mox" in model:
-        return "MOX"
-    elif "Omnia" in model:
-        return "OMNIA"
-    elif "Turris":
-        return "TURRIS"
-    else:
-        return ""
+    with open(os.path.join(__P_ROOT__, 'sys/firmware/devicetree/base/model'), 'r') as f:
+        model = f.read()
+        if "Mox" in model:
+            return "MOX"
+        elif "Omnia" in model:
+            return "OMNIA"
+        elif "Turris":
+            return "TURRIS"
+        else:
+            return ""
 
 
 def get_ifaces():
