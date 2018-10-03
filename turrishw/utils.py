@@ -42,6 +42,14 @@ def get_iface_speed(iface):
         return int(speed)
 
 
+def get_TOS_major_version():
+    from turrishw import __P_ROOT__
+    with open(os.path.join(__P_ROOT__, 'etc/turris-version'), 'r') as f:
+        version = f.read()
+        parts = version.split('.')
+        return int(parts[0])
+
+
 def iface_info(iface, desc):
     state = get_iface_state(iface)
     return {"name": iface, "description": desc, "state": state,

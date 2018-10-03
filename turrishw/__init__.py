@@ -49,7 +49,11 @@ def get_ifaces():
     if model == "MOX":
         ifaces = mox.get_interfaces()
     elif model == "OMNIA":
-        ifaces = omnia.get_interfaces()
+        major_version = utils.get_TOS_major_version()
+        if major_version >= 4:
+            ifaces = omnia.get_interfaces()
+        else:
+            print("unsupported TOs version")
     else:
         print("unsupported model")
     return utils.ifaces_array2dict(ifaces)
