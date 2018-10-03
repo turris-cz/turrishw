@@ -25,29 +25,31 @@
 import os
 
 
+def get_first_line(filename):
+    with open(filename, 'r') as f:
+        return f.readline()
+
+
 def get_iface_state(iface):
     from turrishw import __P_ROOT__
-    with open(os.path.join(__P_ROOT__, 'sys/class/net/{}/operstate'.format(iface)), 'r') as f:
-        operstate = f.readline()
-        if operstate.strip() == "up":
-            return "up"
-        else:
-            return "down"
+    operstate = get_first_line(os.path.join(__P_ROOT__, 'sys/class/net/{}/operstate'.format(iface)))
+    if operstate.strip() == "up":
+        return "up"
+    else:
+        return "down"
 
 
 def get_iface_speed(iface):
     from turrishw import __P_ROOT__
-    with open(os.path.join(__P_ROOT__, 'sys/class/net/{}/speed'.format(iface)), 'r') as f:
-        speed = f.readline()
-        return int(speed)
+    speed = get_first_line(os.path.join(__P_ROOT__, 'sys/class/net/{}/speed'.format(iface)))
+    return int(speed)
 
 
 def get_TOS_major_version():
     from turrishw import __P_ROOT__
-    with open(os.path.join(__P_ROOT__, 'etc/turris-version'), 'r') as f:
-        version = f.read()
-        parts = version.split('.')
-        return int(parts[0])
+    version = get_first_line(os.path.join(__P_ROOT__, 'etc/turris-version'))
+    parts = version.split('.')
+    return int(parts[0])
 
 
 def iface_info(iface, desc):
