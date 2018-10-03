@@ -38,7 +38,7 @@ def get_iface_state(iface):
 def get_iface_speed(iface):
     from turrishw import __P_ROOT__
     with open(os.path.join(__P_ROOT__, 'sys/class/net/{}/speed'.format(iface)), 'r') as f:
-        speed = f.read()
+        speed = f.readline()
         return int(speed)
 
 

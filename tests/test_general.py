@@ -17,8 +17,12 @@
 import pytest
 import os
 import json
-import turrishw as thw
+import shutil
 
+tmpdir = "/tmp/turrishw-tests"
+os.environ["TURRISHW_ROOT"] = tmpdir
+
+import turrishw as thw
 
 # TODO mox-4.14
 @pytest.fixture(params=[
@@ -29,14 +33,14 @@ import turrishw as thw
 def set_root(request):
     root = request.param
     testdir = os.path.join(os.getcwd(), 'tests_roots')
-    orig_root = thw.__P_ROOT__
-    newroot = os.path.join(testdir, root) + "/"
-    print(newroot)
-    thw.__P_ROOT__ = newroot
+    testroot = os.path.join(testdir, root)
+    os.system("cp -r --no-preserve=mode,ownership " + testroot + " " + tmpdir)
 
     yield os.path.join(testdir, root + '.json')
 
-    thw.__P_ROOT__ = orig_root
+    os.system("rm -rf " + tmpdir)
+
+
 
 
 def test_all(set_root):
