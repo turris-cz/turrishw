@@ -52,9 +52,9 @@ def get_TOS_major_version():
     return int(parts[0])
 
 
-def iface_info(iface, desc):
+def iface_info(iface, desc, type):
     state = get_iface_state(iface)
-    return {"name": iface, "description": desc, "state": state,
+    return {"name": iface, "type": type, "description": desc, "state": state,
             "link_speed": get_iface_speed(iface) if state == "up" else 0}
 
 

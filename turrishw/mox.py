@@ -32,7 +32,7 @@ def _get_modules():
 
 def get_interfaces():
     ifaces = []
-    ifaces.append(utils.iface_info("eth0", "E0"))
+    ifaces.append(utils.iface_info("eth0", "E0", "eth"))
     modules = _get_modules()
     peridot_cnt = sum(1 for m in modules if "peridot" in m)
     topaz_cnt = sum(1 for m in modules if "topaz" in m)
@@ -40,11 +40,12 @@ def get_interfaces():
     sfp_cnt = sum(1 for m in modules if "sfp" in m)
     if peridot_cnt == 0:
         if sfp_cnt == 1:
-            ifaces.append(utils.iface_info("eth1", "SPF"))
+            ifaces.append(utils.iface_info("eth1", "SPF", "eth"))
     else:
         if sfp_cnt == 1:
-            ifaces.append(utils.iface_info("spf", "SPF"))
+            ifaces.append(utils.iface_info("spf", "SPF", "eth"))
     for i in range(ports_num):
-        ifaces.append(utils.iface_info("lan{}".format(i + 1), 
-                                        "E{}-{}".format(int(i/4) + 1, i % 4 + 1)))
+        ifaces.append(utils.iface_info("lan{}".format(i + 1),
+                                        "E{}-{}".format(int(i/4) + 1, i % 4 + 1),
+                                        "eth"))
     return ifaces

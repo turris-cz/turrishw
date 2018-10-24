@@ -1,31 +1,37 @@
 {
 	"eth2": {
 		"description": "WAN",
+		"type": "eth",
 		"link_speed": 0,
 		"state": "down"
 	},
 	"lan0": {
 		"description": "LAN0",
+		"type": "eth",
 		"link_speed": 0,
 		"state": "down"
 	},
 	"lan1": {
 		"description": "LAN1",
+		"type": "eth",
 		"link_speed": 0,
 		"state": "down"
 	},
 	"lan2": {
 		"description": "LAN2",
+		"type": "eth",
 		"link_speed": 0,
 		"state": "down"
 	},
 	"lan3": {
 		"description": "LAN3",
+		"type": "eth",
 		"link_speed": 1000,
 		"state": "up"
 	},
 	"lan4": {
 		"description": "LAN4",
+		"type": "eth",
 		"link_speed": 0,
 		"state": "down"
 	}

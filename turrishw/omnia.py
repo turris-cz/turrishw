@@ -27,10 +27,10 @@ from . import utils
 
 def get_interfaces():
     ifaces = []
-    ifaces.append(utils.iface_info("eth2", "WAN"))
-    ifaces.append(utils.iface_info("lan0", "LAN0"))
-    ifaces.append(utils.iface_info("lan1", "LAN1"))
-    ifaces.append(utils.iface_info("lan2", "LAN2"))
-    ifaces.append(utils.iface_info("lan3", "LAN3"))
-    ifaces.append(utils.iface_info("lan4", "LAN4"))
+    ifaces.append(utils.iface_info("eth2", "WAN", "eth"))
+    ifaces.append(utils.iface_info("lan0", "LAN0", "eth"))
+    ifaces.append(utils.iface_info("lan1", "LAN1", "eth"))
+    ifaces.append(utils.iface_info("lan2", "LAN2", "eth"))
+    ifaces.append(utils.iface_info("lan3", "LAN3", "eth"))
+    ifaces.append(utils.iface_info("lan4", "LAN4", "eth"))
     return ifaces
