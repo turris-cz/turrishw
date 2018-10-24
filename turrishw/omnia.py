@@ -23,7 +23,12 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 # EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 import os
+import logging
 from . import utils
+from turrishw import __P_ROOT__
+
+logger = logging.getLogger("turrishw")
+
 
 def get_interfaces():
     ifaces = []
@@ -33,4 +38,14 @@ def get_interfaces():
     ifaces.append(utils.iface_info("lan2", "LAN2", "eth"))
     ifaces.append(utils.iface_info("lan3", "LAN3", "eth"))
     ifaces.append(utils.iface_info("lan4", "LAN4", "eth"))
+    for iface in utils.get_wifi_ifaces():
+        path = os.readlink(os.path.join(__P_ROOT__, "sys/class/net", iface))
+        if "pci0000:00/0000:00:01.0" in path:
+            ifaces.append(utils.iface_info(iface, "mPCI1", "wifi"))
+        elif "pci0000:00/0000:00:02.0" in path:
+            ifaces.append(utils.iface_info(iface, "mPCI2", "wifi"))
+        elif "pci0000:00/0000:00:03.0" in path:
+            ifaces.append(utils.iface_info(iface, "mPCI3", "wifi"))
+        else:
+            logger.warn("unrecognized type of wifi interface %s: path %s", iface, path)
     return ifaces

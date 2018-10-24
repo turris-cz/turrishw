@@ -34,6 +34,7 @@ def set_root(request, monkeypatch):
     with monkeypatch.context() as m:
         m.setattr("turrishw.__P_ROOT__", testroot)
         m.setattr("turrishw.mox.__P_ROOT__", testroot)
+        m.setattr("turrishw.omnia.__P_ROOT__", testroot)
         yield os.path.join(testdir, root + '.json')
 
 

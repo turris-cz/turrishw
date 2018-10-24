@@ -23,8 +23,12 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 # EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 import os
+import logging
 from . import utils
 from turrishw import __P_ROOT__
+
+logger = logging.getLogger("turrishw")
+
 
 def _get_modules():
     return os.listdir(os.path.join(__P_ROOT__, 'sys/bus/moxtet/devices'))
@@ -48,4 +52,12 @@ def get_interfaces():
         ifaces.append(utils.iface_info("lan{}".format(i + 1),
                                         "E{}-{}".format(int(i/4) + 1, i % 4 + 1),
                                         "eth"))
+    for iface in utils.get_wifi_ifaces():
+        path = os.readlink(os.path.join(__P_ROOT__, "sys/class/net", iface))
+        if "pci0000:00/0000:00:00.0" in path:
+            ifaces.append(utils.iface_info(iface, "mPCI1", "wifi"))  # pci module
+        elif "mmc0:0001" in path:
+            ifaces.append(utils.iface_info(iface, "sdio", "wifi"))
+        else:
+            logger.warn("unrecognized type of wifi interface %s: path %s", iface, path)
     return ifaces

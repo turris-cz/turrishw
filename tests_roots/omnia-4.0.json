@@ -34,5 +34,18 @@
 		"type": "eth",
 		"link_speed": 0,
 		"state": "down"
+	},
+	"wlan0": {
+		"description": "mPCI2",
+                "link_speed": 0,
+                "state": "down",
+                "type": "wifi"
+	},
+	"wlan1": {
+		"description": "mPCI3",
+                "link_speed": 0,
+                "state": "down",
+                "type": "wifi"
 	}
+
 }
