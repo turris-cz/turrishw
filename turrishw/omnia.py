@@ -29,23 +29,29 @@ from turrishw import __P_ROOT__
 
 logger = logging.getLogger("turrishw")
 
-
-def get_interfaces():
+def _get_wifi_interfaces():
     ifaces = []
-    ifaces.append(utils.iface_info("eth2", "WAN", "eth"))
-    ifaces.append(utils.iface_info("lan0", "LAN0", "eth"))
-    ifaces.append(utils.iface_info("lan1", "LAN1", "eth"))
-    ifaces.append(utils.iface_info("lan2", "LAN2", "eth"))
-    ifaces.append(utils.iface_info("lan3", "LAN3", "eth"))
-    ifaces.append(utils.iface_info("lan4", "LAN4", "eth"))
     for iface in utils.get_wifi_ifaces():
         path = os.readlink(os.path.join(__P_ROOT__, "sys/class/net", iface))
         if "pci0000:00/0000:00:01.0" in path:
-            ifaces.append(utils.iface_info(iface, "mPCI1", "wifi"))
+            ifaces.append(utils.iface_info(iface, "wifi", "pci", 0, "1"))
         elif "pci0000:00/0000:00:02.0" in path:
-            ifaces.append(utils.iface_info(iface, "mPCI2", "wifi"))
+            ifaces.append(utils.iface_info(iface, "wifi", "pci", 0, "2"))
         elif "pci0000:00/0000:00:03.0" in path:
-            ifaces.append(utils.iface_info(iface, "mPCI3", "wifi"))
+            ifaces.append(utils.iface_info(iface, "wifi", "pci", 0, "3"))
         else:
             logger.warn("unrecognized type of wifi interface %s: path %s", iface, path)
+    return ifaces
+
+
+def get_interfaces():
+    ifaces = []
+    ifaces.append(utils.iface_info("eth2", "eth", "eth", 0, "WAN"))
+    # SFP doesn't work at the moment
+    ifaces.append(utils.iface_info("lan0", "eth", "eth", 0, "LAN0"))
+    ifaces.append(utils.iface_info("lan1", "eth", "eth", 0, "LAN1"))
+    ifaces.append(utils.iface_info("lan2", "eth", "eth", 0, "LAN2"))
+    ifaces.append(utils.iface_info("lan3", "eth", "eth", 0, "LAN3"))
+    ifaces.append(utils.iface_info("lan4", "eth", "eth", 0, "LAN4"))
+    ifaces = ifaces + _get_wifi_interfaces()
     return ifaces

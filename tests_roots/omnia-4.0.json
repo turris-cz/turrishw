@@ -1,51 +1,66 @@
 {
 	"eth2": {
-		"description": "WAN",
-		"type": "eth",
+        "type": "eth",
+        "bus": "eth",
+        "module_id": 0,
+        "slot": "WAN",
 		"link_speed": 0,
 		"state": "down"
 	},
 	"lan0": {
-		"description": "LAN0",
-		"type": "eth",
+        "type": "eth",
+        "bus": "eth",
+        "module_id": 0,
+        "slot": "LAN0",
 		"link_speed": 0,
 		"state": "down"
 	},
 	"lan1": {
-		"description": "LAN1",
-		"type": "eth",
+        "type": "eth",
+        "bus": "eth",
+        "module_id": 0,
+        "slot": "LAN1",
 		"link_speed": 0,
 		"state": "down"
 	},
 	"lan2": {
-		"description": "LAN2",
-		"type": "eth",
+        "type": "eth",
+        "bus": "eth",
+        "module_id": 0,
+        "slot": "LAN2",
 		"link_speed": 0,
 		"state": "down"
 	},
 	"lan3": {
-		"description": "LAN3",
-		"type": "eth",
+        "type": "eth",
+        "bus": "eth",
+        "module_id": 0,
+        "slot": "LAN3",
 		"link_speed": 1000,
 		"state": "up"
 	},
 	"lan4": {
-		"description": "LAN4",
-		"type": "eth",
+        "type": "eth",
+        "bus": "eth",
+        "module_id": 0,
+        "slot": "LAN4",
 		"link_speed": 0,
 		"state": "down"
 	},
 	"wlan0": {
-		"description": "mPCI2",
-                "link_speed": 0,
-                "state": "down",
-                "type": "wifi"
+        "type": "wifi",
+        "bus": "pci",
+        "module_id": 0,
+        "slot": "2",
+        "state": "down",
+        "link_speed": 0
 	},
 	"wlan1": {
-		"description": "mPCI3",
-                "link_speed": 0,
-                "state": "down",
-                "type": "wifi"
+        "type": "wifi",
+        "bus": "pci",
+        "module_id": 0,
+        "slot": "3",
+        "state": "down",
+        "link_speed": 0
 	}
-
 }

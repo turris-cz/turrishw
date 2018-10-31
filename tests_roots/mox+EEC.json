@@ -1,1 +1,170 @@
-{"eth0": {"description": "E0", "type": "eth", "state": "up", "link_speed": 1000}, "lan1": {"description": "E1-1", "type": "eth", "state": "down", "link_speed": 0}, "lan2": {"description": "E1-2", "type": "eth", "state": "down", "link_speed": 0}, "lan3": {"description": "E1-3", "type": "eth", "state": "down", "link_speed": 0}, "lan4": {"description": "E1-4", "type": "eth", "state": "down", "link_speed": 0}, "lan5": {"description": "E2-1", "type": "eth", "state": "down", "link_speed": 0}, "lan6": {"description": "E2-2", "type": "eth", "state": "down", "link_speed": 0}, "lan7": {"description": "E2-3", "type": "eth", "state": "down", "link_speed": 0}, "lan8": {"description": "E2-4", "type": "eth", "state": "down", "link_speed": 0}, "lan9": {"description": "E3-1", "type": "eth", "state": "down", "link_speed": 0}, "lan10": {"description": "E3-2", "type": "eth", "state": "down", "link_speed": 0}, "lan11": {"description": "E3-3", "type": "eth", "state": "down", "link_speed": 0}, "lan12": {"description": "E3-4", "type": "eth", "state": "down", "link_speed": 0}, "lan13": {"description": "E4-1", "type": "eth", "state": "down", "link_speed": 0}, "lan14": {"description": "E4-2", "type": "eth", "state": "down", "link_speed": 0}, "lan15": {"description": "E4-3", "type": "eth", "state": "down", "link_speed": 0}, "lan16": {"description": "E4-4", "type": "eth", "state": "down", "link_speed": 0}, "lan17": {"description": "E5-1", "type": "eth", "state": "down", "link_speed": 0}, "lan18": {"description": "E5-2", "type": "eth", "state": "down", "link_speed": 0}, "lan19": {"description": "E5-3", "type": "eth", "state": "down", "link_speed": 0}, "lan20": {"description": "E5-4", "type": "eth", "state": "down", "link_speed": 0}}
+{
+    "eth0": {
+        "type": "eth",
+        "bus": "eth",
+        "module_id": 0,
+        "slot": "0",
+        "state": "up",
+        "link_speed": 1000
+    },
+    "lan1": {
+        "type": "eth",
+        "bus": "eth",
+        "module_id": 1,
+        "slot": "0",
+        "state": "down",
+        "link_speed": 0
+    },
+    "lan2": {
+        "type": "eth",
+        "bus": "eth",
+        "module_id": 1,
+        "slot": "1",
+        "state": "down",
+        "link_speed": 0
+    },
+    "lan3": {
+        "type": "eth",
+        "bus": "eth",
+        "module_id": 1,
+        "slot": "2",
+        "state": "down",
+        "link_speed": 0
+    },
+    "lan4": {
+        "type": "eth",
+        "bus": "eth",
+        "module_id": 1,
+        "slot": "3",
+        "state": "down",
+        "link_speed": 0
+    },
+    "lan5": {
+        "type": "eth",
+        "bus": "eth",
+        "module_id": 1,
+        "slot": "4",
+        "state": "down",
+        "link_speed": 0
+    },
+    "lan6": {
+        "type": "eth",
+        "bus": "eth",
+        "module_id": 1,
+        "slot": "5",
+        "state": "down",
+        "link_speed": 0
+    },
+    "lan7": {
+        "type": "eth",
+        "bus": "eth",
+        "module_id": 1,
+        "slot": "6",
+        "state": "down",
+        "link_speed": 0
+    },
+    "lan8": {
+        "type": "eth",
+        "bus": "eth",
+        "module_id": 1,
+        "slot": "7",
+        "state": "down",
+        "link_speed": 0
+    },
+    "lan9": {
+        "type": "eth",
+        "bus": "eth",
+        "module_id": 2,
+        "slot": "0",
+        "state": "down",
+        "link_speed": 0
+    },
+    "lan10": {
+        "type": "eth",
+        "bus": "eth",
+        "module_id": 2,
+        "slot": "1",
+        "state": "down",
+        "link_speed": 0
+    },
+    "lan11": {
+        "type": "eth",
+        "bus": "eth",
+        "module_id": 2,
+        "slot": "2",
+        "state": "down",
+        "link_speed": 0
+    },
+    "lan12": {
+        "type": "eth",
+        "bus": "eth",
+        "module_id": 2,
+        "slot": "3",
+        "state": "down",
+        "link_speed": 0
+    },
+    "lan13": {
+        "type": "eth",
+        "bus": "eth",
+        "module_id": 2,
+        "slot": "4",
+        "state": "down",
+        "link_speed": 0
+    },
+    "lan14": {
+        "type": "eth",
+        "bus": "eth",
+        "module_id": 2,
+        "slot": "5",
+        "state": "down",
+        "link_speed": 0
+    },
+    "lan15": {
+        "type": "eth",
+        "bus": "eth",
+        "module_id": 2,
+        "slot": "6",
+        "state": "down",
+        "link_speed": 0
+    },
+    "lan16": {
+        "type": "eth",
+        "bus": "eth",
+        "module_id": 2,
+        "slot": "7",
+        "state": "down",
+        "link_speed": 0
+    },
+    "lan17": {
+        "type": "eth",
+        "bus": "eth",
+        "module_id": 3,
+        "slot": "0",
+        "state": "down",
+        "link_speed": 0
+    },
+    "lan18": {
+        "type": "eth",
+        "bus": "eth",
+        "module_id": 3,
+        "slot": "1",
+        "state": "down",
+        "link_speed": 0
+    },
+    "lan19": {
+        "type": "eth",
+        "bus": "eth",
+        "module_id": 3,
+        "slot": "2",
+        "state": "down",
+        "link_speed": 0
+    },
+    "lan20": {
+        "type": "eth",
+        "bus": "eth",
+        "module_id": 3,
+        "slot": "3",
+        "state": "down",
+        "link_speed": 0
+    }
+}

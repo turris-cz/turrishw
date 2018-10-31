@@ -1,1 +1,42 @@
-{"eth0": {"description": "E0", "type": "eth", "state": "up", "link_speed": 1000}, "lan1": {"description": "E1-1", "type": "eth", "state": "down", "link_speed": 0}, "lan2": {"description": "E1-2", "type": "eth", "state": "down", "link_speed": 0}, "lan3": {"description": "E1-3", "type": "eth", "state": "down", "link_speed": 0}, "lan4": {"description": "E1-4", "type": "eth", "state": "down", "link_speed": 0}}
+{
+    "eth0": {
+        "type": "eth",
+        "bus": "eth",
+        "module_id": 0,
+        "slot": "0",
+        "state": "up",
+        "link_speed": 1000
+    },
+    "lan1": {
+        "type": "eth",
+        "bus": "eth",
+        "module_id": 1,
+        "slot": "0",
+        "state": "down",
+        "link_speed": 0
+    },
+    "lan2": {
+        "type": "eth",
+        "bus": "eth",
+        "module_id": 1,
+        "slot": "1",
+        "state": "down",
+        "link_speed": 0
+    },
+    "lan3": {
+        "type": "eth",
+        "bus": "eth",
+        "module_id": 1,
+        "slot": "2",
+        "state": "down",
+        "link_speed": 0
+    },
+    "lan4": {
+        "type": "eth",
+        "bus": "eth",
+        "module_id": 1,
+        "slot": "3",
+        "state": "down",
+        "link_speed": 0
+    }
+}
