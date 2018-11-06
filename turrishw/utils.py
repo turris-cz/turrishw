@@ -41,7 +41,10 @@ def get_iface_state(iface):
 
 def get_iface_speed(iface):
     from turrishw import __P_ROOT__
-    speed = get_first_line(os.path.join(__P_ROOT__, 'sys/class/net/{}/speed'.format(iface)))
+    try:
+        speed = get_first_line(os.path.join(__P_ROOT__, 'sys/class/net/{}/speed'.format(iface)))
+    except OSError:
+        return 0
     return int(speed)
 
 
