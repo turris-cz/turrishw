@@ -25,6 +25,7 @@ import turrishw as thw
 @pytest.fixture(params=[
     "mox+C",
     "mox+EEC",
+    "mox+B+sdio",
     "omnia-4.0",
     ])
 def set_root(request, monkeypatch):
