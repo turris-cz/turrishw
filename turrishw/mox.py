@@ -51,11 +51,11 @@ def _get_sfp_interface(modules):
         sfp_type = "eth"
         if peridot_cnt == 0:
             # if there is no peridot module, SPF is eth1
-            return utils.iface_info("eth1", sfp_type, "sfp", sfp_seq, "0")
+            return [utils.iface_info("eth1", sfp_type, "sfp", sfp_seq, "0")]
         else:
             # if there is peridot (switch) module (closer to CPU), SPF is
             # considered to be part of that switch. And it's called spf.
-            return utils.iface_info("spf", sfp_type, "sfp", sfp_seq, "0")
+            return [utils.iface_info("sfp", sfp_type, "sfp", sfp_seq, "0")]
     return []
 
 
