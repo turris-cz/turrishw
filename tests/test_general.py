@@ -26,6 +26,7 @@ import turrishw as thw
     "mox+C",
     "mox+EEC",
     "mox+B+sdio",
+    "mox+BEED+sdio+usb_eth",
     "omnia-4.0",
     ])
 def set_root(request, monkeypatch):
