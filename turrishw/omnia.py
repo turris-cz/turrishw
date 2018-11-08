@@ -62,6 +62,9 @@ def get_interfaces():
         elif "f10f8000.usb3" in path:
             # rear USB3.0
             append_iface(iface, utils.find_iface_type(iface), "usb", "rear")
+        elif "f1058000.usb" in path:
+            # USB2.0 on the PCI connector 3
+            append_iface(iface, utils.find_iface_type(iface), "pci", 3)
         elif "f1070000.ethernet" in path or "f1030000.ethernet" in path:
             # ethernet interfaces connected to switch - ignore them
             pass
