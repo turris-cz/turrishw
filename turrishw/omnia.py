@@ -56,6 +56,12 @@ def get_interfaces():
                 append_iface(iface, "wifi", "pci", slot)
             else:
                 logger.warn("unknown PCI slot module")
+        elif "f10f0000.usb3" in path:
+            # front USB3.0
+            append_iface(iface, utils.find_iface_type(iface), "usb", "front")
+        elif "f10f8000.usb3" in path:
+            # rear USB3.0
+            append_iface(iface, utils.find_iface_type(iface), "usb", "rear")
         elif "f1070000.ethernet" in path or "f1030000.ethernet" in path:
             # ethernet interfaces connected to switch - ignore them
             pass

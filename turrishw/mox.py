@@ -86,7 +86,10 @@ def get_interfaces():
         elif "d0070000.pcie" in path:
             # PCIe on the MOXTET connector
             pci_seq = get_module_rank("pci")
-            append_iface(iface, "wifi", "pci", pci_seq, 0)
+            append_iface(iface, utils.find_iface_type(iface), "pci", pci_seq, 0)
+        elif "d0058000.usb" in path:
+            # USB on the CPU module
+            append_iface(iface, utils.find_iface_type(iface), "usb", 0, 0)
         elif "virtual" in path:
             # virtual ifaces (loopback, bridges, ...) - we don't care about these
             pass

@@ -48,6 +48,17 @@ def get_iface_speed(iface):
     return int(speed)
 
 
+def find_iface_type(iface):
+    from turrishw import __P_ROOT__
+    path = os.path.join(__P_ROOT__, 'sys/class/net', iface)
+    if os.path.isdir(os.path.join(path, "phy80211")):
+        return "wifi"
+    if os.path.isdir(os.path.join(path, "qmi")):
+        return "wwan"
+    # TODO: support other protocols of LTE modems
+    return "eth"
+
+
 def get_ifaces():
     from turrishw import __P_ROOT__
     path = os.path.join(__P_ROOT__, 'sys/class/net')
