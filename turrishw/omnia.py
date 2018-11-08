@@ -24,34 +24,45 @@
 # EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 import os
 import logging
+import re
 from . import utils
 from turrishw import __P_ROOT__
 
 logger = logging.getLogger("turrishw")
 
-def _get_wifi_interfaces():
-    ifaces = []
-    for iface in utils.get_wifi_ifaces():
-        path = os.readlink(os.path.join(__P_ROOT__, "sys/class/net", iface))
-        if "pci0000:00/0000:00:01.0" in path:
-            ifaces.append(utils.iface_info(iface, "wifi", "pci", 0, "1"))
-        elif "pci0000:00/0000:00:02.0" in path:
-            ifaces.append(utils.iface_info(iface, "wifi", "pci", 0, "2"))
-        elif "pci0000:00/0000:00:03.0" in path:
-            ifaces.append(utils.iface_info(iface, "wifi", "pci", 0, "3"))
-        else:
-            logger.warn("unrecognized type of wifi interface %s: path %s", iface, path)
-    return ifaces
-
 
 def get_interfaces():
+    def append_iface(iface, type, bus, port):
+        ifaces.append(utils.iface_info(iface, type, bus, 0, str(port)))
+
     ifaces = []
-    ifaces.append(utils.iface_info("eth2", "eth", "eth", 0, "WAN"))
-    # SFP doesn't work at the moment
-    ifaces.append(utils.iface_info("lan0", "eth", "eth", 0, "LAN0"))
-    ifaces.append(utils.iface_info("lan1", "eth", "eth", 0, "LAN1"))
-    ifaces.append(utils.iface_info("lan2", "eth", "eth", 0, "LAN2"))
-    ifaces.append(utils.iface_info("lan3", "eth", "eth", 0, "LAN3"))
-    ifaces.append(utils.iface_info("lan4", "eth", "eth", 0, "LAN4"))
-    ifaces = ifaces + _get_wifi_interfaces()
+    for iface in utils.get_ifaces():
+        path = os.readlink(os.path.join(__P_ROOT__, "sys/class/net", iface))
+        if "f1072004.mdio" in path:
+            # switch
+            iface_path = os.path.join(__P_ROOT__, "sys/class/net", iface)
+            port = int(utils.get_first_line(os.path.join(iface_path, "phys_port_name"))[1:])
+            # phys_port_name is "p{number}", e.g. 'p1' - remove leading p and
+            # convert to int
+            append_iface(iface, "eth", "eth", "LAN"+str(port))
+        elif "f1034000.ethernet" in path:
+            # WAN port
+            append_iface("eth2", "eth", "eth", "WAN")
+        elif "pci0000:00" in path:
+            # PCI
+            m = re.search('/0000:00:0([0-3])\.0/', path)
+            if m:
+                slot = m.group(1)
+                append_iface(iface, "wifi", "pci", slot)
+            else:
+                logger.warn("unknown PCI slot module")
+        elif "f1070000.ethernet" in path or "f1030000.ethernet" in path:
+            # ethernet interfaces connected to switch - ignore them
+            pass
+        elif "virtual" in path:
+            # virtual ifaces (loopback, bridges, ...) - we don't care about these
+            pass
+        # TODO: add SFP - once it starts to work
+        else:
+            logger.warn("unknown interface type: %s", iface)
     return ifaces

@@ -48,12 +48,10 @@ def get_iface_speed(iface):
     return int(speed)
 
 
-def get_wifi_ifaces():
+def get_ifaces():
     from turrishw import __P_ROOT__
     path = os.path.join(__P_ROOT__, 'sys/class/net')
     for f in os.listdir(path):
-        if not os.path.isdir(os.path.join(path, f, "phy80211")):
-            continue
         yield f
 
 
