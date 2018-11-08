@@ -33,7 +33,7 @@ logger = logging.getLogger("turrishw")
 def _get_modules():
     modules = os.listdir(os.path.join(__P_ROOT__, 'sys/bus/moxtet/devices'))
     # modules in /sys/bus/moxtet/devices/ are named moxtet-NAME.SEQUENCE
-    modules = sorted(modules, key=lambda x: x.split('.'))
+    modules = sorted(modules, key=lambda x: x.split('.')[-1])
     return modules
 
 # unfortunatelly, AFAIK there is no way how one can determine module on
