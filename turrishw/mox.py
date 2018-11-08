@@ -23,6 +23,7 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 # EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 import os
+import re
 import logging
 from . import utils
 from turrishw import __P_ROOT__
@@ -85,8 +86,18 @@ def get_interfaces():
             append_iface(iface, "wifi", "sdio", 0, 0)
         elif "d0070000.pcie" in path:
             # PCIe on the MOXTET connector
-            pci_seq = get_module_rank("pci")
-            append_iface(iface, utils.find_iface_type(iface), "pci", pci_seq, 0)
+            # can be PCI (B) or USB3.0 (F) module
+            if "usb3" in path:
+                m = re.search('/3-([0-4])/', path)
+                if m:
+                    usb_seq = get_module_rank("usb3.0")
+                    port = m.group(1)
+                    append_iface(iface, utils.find_iface_type(iface), "usb", usb_seq, port)
+                else:
+                    logger.warn("unknown port on USB3.0 module")
+            else:  # PCI module
+                pci_seq = get_module_rank("pci")
+                append_iface(iface, utils.find_iface_type(iface), "pci", pci_seq, 0)
         elif "d0058000.usb" in path:
             # USB on the CPU module
             append_iface(iface, utils.find_iface_type(iface), "usb", 0, 0)
