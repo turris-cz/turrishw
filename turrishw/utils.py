@@ -43,9 +43,10 @@ def get_iface_speed(iface):
     from turrishw import __P_ROOT__
     try:
         speed = get_first_line(os.path.join(__P_ROOT__, 'sys/class/net/{}/speed'.format(iface)))
-    except OSError:
+        return int(speed)
+    except (OSError, ValueError):
+        # can't read the file or can't convert value to int (file is empty)
         return 0
-    return int(speed)
 
 
 def find_iface_type(iface):

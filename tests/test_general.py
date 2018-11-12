@@ -17,27 +17,31 @@
 import pytest
 import os
 import json
+import tarfile
 
 
 import turrishw as thw
 
 # TODO mox-4.14
 @pytest.fixture(params=[
-    "mox+C",
-    "mox+EEC",
-    "mox+B+sdio",
-    "mox+BEED+sdio+usb_eth",
-    "omnia-4.0",
+    "omnia",
+    "mox1",
+    "mox2",
+    "mox3",
     ])
-def set_root(request, monkeypatch):
+def set_root(request, monkeypatch, tmpdir):
     root = request.param
-    testdir = os.path.join(os.getcwd(), 'tests_roots')
-    testroot = os.path.join(testdir, root)
+    roots_dir = os.path.join(os.getcwd(), 'tests_roots')
+    result_json = os.path.join(roots_dir, root + '.json')
+    root_tar = os.path.join(roots_dir, root + '.tar.gz')
+    tmpdir = str(tmpdir)
+    with tarfile.open(root_tar) as tar:
+        tar.extractall(path=tmpdir)
     with monkeypatch.context() as m:
-        m.setattr("turrishw.__P_ROOT__", testroot)
-        m.setattr("turrishw.mox.__P_ROOT__", testroot)
-        m.setattr("turrishw.omnia.__P_ROOT__", testroot)
-        yield os.path.join(testdir, root + '.json')
+        m.setattr("turrishw.__P_ROOT__", tmpdir)
+        m.setattr("turrishw.mox.__P_ROOT__", tmpdir)
+        m.setattr("turrishw.omnia.__P_ROOT__", tmpdir)
+        yield result_json
 
 
 def test_all(set_root):

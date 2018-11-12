@@ -1,0 +1,16 @@
+{
+  "eth0": {"bus": "eth", "link_speed": 1000, "module_id": 0, "slot": "0", "state": "up", "type": "eth"}, 
+  "eth2": {"bus": "usb", "link_speed": 0, "module_id": 1, "slot": "1", "state": "down", "type": "eth"}, 
+  "lan1": {"bus": "eth", "link_speed": 0, "module_id": 2, "slot": "0", "state": "down", "type": "eth"}, 
+  "lan10": {"bus": "eth", "link_speed": 0, "module_id": 3, "slot": "1", "state": "down", "type": "eth"}, 
+  "lan11": {"bus": "eth", "link_speed": 0, "module_id": 3, "slot": "2", "state": "down", "type": "eth"}, 
+  "lan12": {"bus": "eth", "link_speed": 0, "module_id": 3, "slot": "3", "state": "down", "type": "eth"}, 
+  "lan2": {"bus": "eth", "link_speed": 0, "module_id": 2, "slot": "1", "state": "down", "type": "eth"}, 
+  "lan3": {"bus": "eth", "link_speed": 0, "module_id": 2, "slot": "2", "state": "down", "type": "eth"}, 
+  "lan4": {"bus": "eth", "link_speed": 0, "module_id": 2, "slot": "3", "state": "down", "type": "eth"}, 
+  "lan5": {"bus": "eth", "link_speed": 0, "module_id": 2, "slot": "4", "state": "down", "type": "eth"}, 
+  "lan6": {"bus": "eth", "link_speed": 0, "module_id": 2, "slot": "5", "state": "down", "type": "eth"}, 
+  "lan7": {"bus": "eth", "link_speed": 0, "module_id": 2, "slot": "6", "state": "down", "type": "eth"}, 
+  "lan8": {"bus": "eth", "link_speed": 0, "module_id": 2, "slot": "7", "state": "down", "type": "eth"}, 
+  "lan9": {"bus": "eth", "link_speed": 0, "module_id": 3, "slot": "0", "state": "down", "type": "eth"}
+}

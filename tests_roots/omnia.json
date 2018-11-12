@@ -1,0 +1,12 @@
+{
+  "eth2": {"bus": "eth", "link_speed": 0, "module_id": 0, "slot": "WAN", "state": "down", "type": "eth"}, 
+  "eth3": {"bus": "usb", "link_speed": 0, "module_id": 0, "slot": "rear", "state": "down", "type": "eth"}, 
+  "eth4": {"bus": "usb", "link_speed": 0, "module_id": 0, "slot": "front", "state": "down", "type": "eth"}, 
+  "lan0": {"bus": "eth", "link_speed": 0, "module_id": 0, "slot": "LAN0", "state": "down", "type": "eth"}, 
+  "lan1": {"bus": "eth", "link_speed": 0, "module_id": 0, "slot": "LAN1", "state": "down", "type": "eth"}, 
+  "lan2": {"bus": "eth", "link_speed": 0, "module_id": 0, "slot": "LAN2", "state": "down", "type": "eth"}, 
+  "lan3": {"bus": "eth", "link_speed": 1000, "module_id": 0, "slot": "LAN3", "state": "up", "type": "eth"}, 
+  "lan4": {"bus": "eth", "link_speed": 0, "module_id": 0, "slot": "LAN4", "state": "down", "type": "eth"}, 
+  "wlan0": {"bus": "pci", "link_speed": 0, "module_id": 0, "slot": "2", "state": "up", "type": "wifi"}, 
+  "wwan0": {"bus": "pci", "link_speed": 0, "module_id": 0, "slot": "3", "state": "down", "type": "wwan"}
+}
