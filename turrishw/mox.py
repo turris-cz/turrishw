@@ -39,8 +39,8 @@ def _get_modules():
 
 
 def get_interfaces():
-    def append_iface(iface, type, bus, module_seq, port):
-        ifaces.append(utils.iface_info(iface, type, bus, module_seq, str(port)))
+    def append_iface(iface, type, bus, module_seq, port, macaddr):
+        ifaces.append(utils.iface_info(iface, type, bus, module_seq, str(port), macaddr))
 
     def get_module_rank(name):
         seq = [i + 1 for i, s in enumerate(modules) if name in s]
@@ -54,9 +54,10 @@ def get_interfaces():
     switch_idxs = [i + 1 for i, s in enumerate(modules) if 'topaz' in s or 'peridot' in s]
     for iface in utils.get_ifaces():
         path = os.readlink(os.path.join(__P_ROOT__, "sys/class/net", iface))
+        iface_path = os.path.join(__P_ROOT__, "sys/class/net", iface)
+        macaddr = utils.get_first_line(os.path.join(iface_path, "address")).strip()
         if "d0032004.mdio-mii" in path:
             # MDIO bus on MOXTET - for switches
-            iface_path = os.path.join(__P_ROOT__, "sys/class/net", iface)
             port = int(utils.get_first_line(os.path.join(iface_path, "phys_port_name"))[1:])
             # phys_port_name is "p{number}", e.g. 'p1' - remove leading p and
             # convert it to int
@@ -66,13 +67,13 @@ def get_interfaces():
             # take just first 2 letters and convert to int
             switch = switch_idxs[switch]
             if port != 10:
-                append_iface(iface, "eth", "eth", switch, port - 1)
+                append_iface(iface, "eth", "eth", switch, port - 1, macaddr)
             else:  # SFP is announced as "p10"
                 sfp_seq = get_module_rank("sfp")
-                append_iface(iface, "eth", "sfp", sfp_seq, 0)
+                append_iface(iface, "eth", "sfp", sfp_seq, 0, macaddr)
         elif "d0030000.ethernet" in path:
             # ethernet port on the CPU board
-            append_iface(iface, "eth", "eth", 0, 0)
+            append_iface(iface, "eth", "eth", 0, 0, macaddr)
         elif "d0040000.ethernet" in path:
             # ethernet on the MOXTET connector
             # when some switches are connected, it shouldn't be touched (it's
@@ -80,10 +81,10 @@ def get_interfaces():
             # actually the SFP interface
             sfp_seq = get_module_rank("sfp")
             if not switch_idxs and sfp_seq:
-                append_iface(iface, "eth", "sfp", sfp_seq, 0)
+                append_iface(iface, "eth", "sfp", sfp_seq, 0, macaddr)
         elif "d00d0000.sdhci" in path:
             # SDIO on the CPU board
-            append_iface(iface, "wifi", "sdio", 0, 0)
+            append_iface(iface, "wifi", "sdio", 0, 0, macaddr)
         elif "d0070000.pcie" in path:
             # PCIe on the MOXTET connector
             # can be PCI (B) or USB3.0 (F) module
@@ -92,20 +93,20 @@ def get_interfaces():
                 if m:
                     usb_seq = get_module_rank("usb3.0")
                     port = m.group(1)
-                    append_iface(iface, utils.find_iface_type(iface), "usb", usb_seq, port)
+                    append_iface(iface, utils.find_iface_type(iface), "usb", usb_seq, port, macaddr)
                 else:
                     logger.warn("unknown port on USB3.0 module")
             else:  # PCI module
                 pci_seq = get_module_rank("pci")
-                append_iface(iface, utils.find_iface_type(iface), "pci", pci_seq, 0)
+                append_iface(iface, utils.find_iface_type(iface), "pci", pci_seq, 0, macaddr)
         elif "d0058000.usb" in path:
             # USB on the CPU module
-            append_iface(iface, utils.find_iface_type(iface), "usb", 0, 0)
+            append_iface(iface, utils.find_iface_type(iface), "usb", 0, 0, macaddr)
         elif "d005e000.usb" in path:
             # USB2.0 on the MOXTET connector
             # the only option now is USB device on PCI module
             pci_seq = get_module_rank("pci")
-            append_iface(iface, utils.find_iface_type(iface), "pci", pci_seq, 0)
+            append_iface(iface, utils.find_iface_type(iface), "pci", pci_seq, 0, macaddr)
         elif "virtual" in path:
             # virtual ifaces (loopback, bridges, ...) - we don't care about these
             pass

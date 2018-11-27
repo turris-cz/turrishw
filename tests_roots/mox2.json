@@ -1,6 +1,6 @@
 {
-  "eth0": {"bus": "eth", "link_speed": 1000, "module_id": 0, "slot": "0", "state": "up", "type": "eth"}, 
-  "eth1": {"bus": "sfp", "link_speed": 0, "module_id": 2, "slot": "0", "state": "down", "type": "eth"}, 
-  "mlan0": {"bus": "sdio", "link_speed": 0, "module_id": 0, "slot": "0", "state": "down", "type": "wifi"}, 
-  "wlan0": {"bus": "pci", "link_speed": 0, "module_id": 1, "slot": "0", "state": "down", "type": "wifi"}
+  "eth0": {"bus": "eth", "link_speed": 1000, "module_id": 0, "slot": "0", "state": "up", "type": "eth", "macaddr": "de:ad:be:ef:99:99"},
+  "eth1": {"bus": "sfp", "link_speed": 0, "module_id": 2, "slot": "0", "state": "down", "type": "eth", "macaddr": "aa:c2:28:b4:6c:f2"},
+  "mlan0": {"bus": "sdio", "link_speed": 0, "module_id": 0, "slot": "0", "state": "down", "type": "wifi", "macaddr": "80:c5:f2:4a:c2:b7"},
+  "wlan0": {"bus": "pci", "link_speed": 0, "module_id": 1, "slot": "0", "state": "down", "type": "wifi", "macaddr": "04:f0:21:1c:b7:58"}
 }

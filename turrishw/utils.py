@@ -74,11 +74,10 @@ def get_TOS_major_version():
     return int(parts[0])
 
 
-def iface_info(iface, type, bus, module_id, slot, state = None):
-    if not state:
-        state = get_iface_state(iface)
+def iface_info(iface, type, bus, module_id, slot, macaddr):
+    state = get_iface_state(iface)
     return {"name": iface, "type": type, "bus": bus, "state": state,
-            "slot": slot, "module_id": module_id,
+            "slot": slot, "module_id": module_id, 'macaddr': macaddr,
             "link_speed": get_iface_speed(iface) if state == "up" else 0}
 
 
