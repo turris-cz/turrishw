@@ -48,7 +48,7 @@ def get_interfaces():
             append_iface(iface, "eth", "eth", "LAN"+str(port), macaddr)
         elif "f1034000.ethernet" in path:
             # WAN port
-            append_iface("eth2", "eth", "eth", "WAN", macaddr)
+            append_iface(iface, "eth", "eth", "WAN", macaddr)
         elif "pci0000:00" in path:
             # PCI
             m = re.search(r'/0000:00:0([0-3])\.0/', path)
