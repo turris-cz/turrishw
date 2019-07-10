@@ -47,7 +47,7 @@ def get_interfaces():
         if seq:
             return seq[0]
         else:
-            return None
+            return 0
 
     modules = _get_modules()
     ifaces = []
