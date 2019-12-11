@@ -27,11 +27,10 @@ from setuptools import setup
 
 setup(
     name='turrishw',
-    version='0.1',
+    version='0.4.2',
     description="Turris hardware detection/query tool.",
     url="https://gitlab.labs.nic.cz/turris/turrishw",
     author="CZ.NIC, z. s. p. o.",
-    author_email="martin.petracek@nic.cz",
     license="MIT",
 
     packages=['turrishw']
