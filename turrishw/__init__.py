@@ -1,4 +1,4 @@
-# Copyright (c) 2018, CZ.NIC, z.s.p.o. (http://www.nic.cz/)
+# Copyright (c) 2018-2021, CZ.NIC, z.s.p.o. (http://www.nic.cz/)
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -23,41 +23,6 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 # EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import os
-import logging
-from . import utils
+from .turrishw import get_model, get_ifaces
 
-
-logger = logging.getLogger("turrishw")
-
-
-__P_ROOT__ = os.getenv("TURRISHW_ROOT", default="/")
-
-def get_model():
-    model = utils.get_first_line(os.path.join(__P_ROOT__, 'sys/firmware/devicetree/base/model'))
-    if "Mox" in model:
-        return "MOX"
-    elif "Omnia" in model:
-        return "OMNIA"
-    elif "Turris":
-        return "TURRIS"
-    else:
-        return ""
-
-
-def get_ifaces():
-    from . import mox, omnia
-    model = get_model()
-    ifaces = []
-    if model == "MOX":
-        ifaces = mox.get_interfaces()
-    elif model == "OMNIA":
-        major_version = utils.get_TOS_major_version()
-        if major_version >= 4:
-            ifaces = omnia.get_interfaces()
-        else:
-            logger.warning("unsupported TOS version (on omnia): %d", major_version)
-    else:
-        logger.warning("unsupported model: %s", model)
-    return utils.ifaces_array2dict(ifaces)
-    
+__all__ = ['get_model', 'get_ifaces']

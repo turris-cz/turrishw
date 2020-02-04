@@ -1,4 +1,4 @@
-# Copyright (c) 2018, CZ.NIC, z.s.p.o. (http://www.nic.cz/)
+# Copyright (c) 2018-2021, CZ.NIC, z.s.p.o. (http://www.nic.cz/)
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -24,6 +24,14 @@
 # EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 import os
 
+# ENV variable is needed for blackbox testing with foris-controller
+TURRISHW_FILE_ROOT = os.getenv("TURRISHW_ROOT", "/")
+
+
+def inject_file_root(*paths):
+    """Inject TURRISHW_FILE_ROOT prefix to file path(s)"""
+    return os.path.join(TURRISHW_FILE_ROOT, *paths)
+
 
 def get_first_line(filename):
     with open(filename, 'r') as f:
@@ -31,8 +39,7 @@ def get_first_line(filename):
 
 
 def get_iface_state(iface):
-    from turrishw import __P_ROOT__
-    operstate = get_first_line(os.path.join(__P_ROOT__, 'sys/class/net/{}/operstate'.format(iface)))
+    operstate = get_first_line(inject_file_root('sys/class/net/{}/operstate'.format(iface)))
     if operstate.strip() == "up":
         return "up"
     else:
@@ -40,9 +47,8 @@ def get_iface_state(iface):
 
 
 def get_iface_speed(iface):
-    from turrishw import __P_ROOT__
     try:
-        speed = get_first_line(os.path.join(__P_ROOT__, 'sys/class/net/{}/speed'.format(iface)))
+        speed = get_first_line(inject_file_root('sys/class/net/{}/speed'.format(iface)))
         return int(speed)
     except (OSError, ValueError):
         # can't read the file or can't convert value to int (file is empty)
@@ -50,8 +56,7 @@ def get_iface_speed(iface):
 
 
 def find_iface_type(iface):
-    from turrishw import __P_ROOT__
-    path = os.path.join(__P_ROOT__, 'sys/class/net', iface)
+    path = inject_file_root('sys/class/net', iface)
     if os.path.isdir(os.path.join(path, "phy80211")):
         return "wifi"
     if os.path.isdir(os.path.join(path, "qmi")):
@@ -61,22 +66,20 @@ def find_iface_type(iface):
 
 
 def get_ifaces():
-    from turrishw import __P_ROOT__
-    path = os.path.join(__P_ROOT__, 'sys/class/net')
+    path = inject_file_root('sys/class/net')
     for f in os.listdir(path):
         yield f
 
 
 def get_TOS_major_version():
-    from turrishw import __P_ROOT__
-    version = get_first_line(os.path.join(__P_ROOT__, 'etc/turris-version'))
+    version = get_first_line(inject_file_root('etc/turris-version'))
     parts = version.split('.')
     return int(parts[0])
 
 
-def iface_info(iface, type, bus, module_id, slot, macaddr):
+def iface_info(iface, if_type, bus, module_id, slot, macaddr):
     state = get_iface_state(iface)
-    return {"name": iface, "type": type, "bus": bus, "state": state,
+    return {"name": iface, "type": if_type, "bus": bus, "state": state,
             "slot": slot, "module_id": module_id, 'macaddr': macaddr,
             "link_speed": get_iface_speed(iface) if state == "up" else 0}
 
@@ -85,5 +88,5 @@ def ifaces_array2dict(ifaces_array):
     d = {}
     for iface in ifaces_array:
         name = iface["name"]
-        d[name] = {i:iface[i] for i in iface if i!='name'}
+        d[name] = {i: iface[i] for i in iface if i != 'name'}
     return d

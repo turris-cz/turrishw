@@ -1,4 +1,4 @@
-# Copyright (c) 2018, CZ.NIC, z.s.p.o. (http://www.nic.cz/)
+# Copyright (c) 2018-2021, CZ.NIC, z.s.p.o. (http://www.nic.cz/)
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,21 +26,20 @@ import os
 import re
 import logging
 from . import utils
-from turrishw import __P_ROOT__
 
-logger = logging.getLogger("turrishw")
+logger = logging.getLogger(__name__)
 
 
 def _get_modules():
-    modules = os.listdir(os.path.join(__P_ROOT__, 'sys/bus/moxtet/devices'))
+    modules = os.listdir(utils.inject_file_root('sys/bus/moxtet/devices'))
     # modules in /sys/bus/moxtet/devices/ are named moxtet-NAME.SEQUENCE
     modules = sorted(modules, key=lambda x: x.split('.')[-1])
     return modules
 
 
 def get_interfaces():
-    def append_iface(iface, type, bus, module_seq, port, macaddr):
-        ifaces.append(utils.iface_info(iface, type, bus, module_seq, str(port), macaddr))
+    def append_iface(iface, if_type, bus, module_seq, port, macaddr):
+        ifaces.append(utils.iface_info(iface, if_type, bus, module_seq, str(port), macaddr))
 
     def get_module_rank(name):
         seq = [i + 1 for i, s in enumerate(modules) if name in s]
@@ -53,8 +52,8 @@ def get_interfaces():
     ifaces = []
     switch_idxs = [i + 1 for i, s in enumerate(modules) if 'topaz' in s or 'peridot' in s]
     for iface in utils.get_ifaces():
-        path = os.readlink(os.path.join(__P_ROOT__, "sys/class/net", iface))
-        iface_path = os.path.join(__P_ROOT__, "sys/class/net", iface)
+        path = os.readlink(utils.inject_file_root("sys/class/net", iface))
+        iface_path = utils.inject_file_root("sys/class/net", iface)
         macaddr = utils.get_first_line(os.path.join(iface_path, "address")).strip()
         if "d0032004.mdio-mii" in path:
             # MDIO bus on MOXTET - for switches
@@ -95,7 +94,7 @@ def get_interfaces():
                     port = m.group(1)
                     append_iface(iface, utils.find_iface_type(iface), "usb", usb_seq, port, macaddr)
                 else:
-                    logger.warn("unknown port on USB3.0 module")
+                    logger.warning("unknown port on USB3.0 module")
             else:  # PCI module
                 pci_seq = get_module_rank("pci")
                 append_iface(iface, utils.find_iface_type(iface), "pci", pci_seq, 0, macaddr)
@@ -111,5 +110,5 @@ def get_interfaces():
             # virtual ifaces (loopback, bridges, ...) - we don't care about these
             pass
         else:
-            logger.warn("unknown interface type: %s", iface)
+            logger.warning("unknown interface type: %s", iface)
     return ifaces

@@ -1,4 +1,4 @@
-# Copyright (c) 2018, CZ.NIC, z.s.p.o. (http://www.nic.cz/)
+# Copyright (c) 2018-2021, CZ.NIC, z.s.p.o. (http://www.nic.cz/)
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,26 +26,30 @@ import os
 import logging
 import re
 from . import utils
-from turrishw import __P_ROOT__
 
-logger = logging.getLogger("turrishw")
+logger = logging.getLogger(__name__)
 
 
 def get_interfaces():
-    def append_iface(iface, type, bus, port, macaddr):
-        ifaces.append(utils.iface_info(iface, type, bus, 0, str(port), macaddr))
+    def append_iface(iface, if_type, bus, port, macaddr):
+        ifaces.append(utils.iface_info(iface, if_type, bus, 0, str(port), macaddr))
+
+    major_version = utils.get_TOS_major_version()
+    if major_version < 4:
+        logger.warning("Unsupported TOS version (on Turris omnia): %d", major_version)
+        return []
 
     ifaces = []
     for iface in utils.get_ifaces():
-        path = os.readlink(os.path.join(__P_ROOT__, "sys/class/net", iface))
-        iface_path = os.path.join(__P_ROOT__, "sys/class/net", iface)
+        path = os.readlink(utils.inject_file_root("sys/class/net", iface))
+        iface_path = utils.inject_file_root("sys/class/net", iface)
         macaddr = utils.get_first_line(os.path.join(iface_path, "address")).strip()
         if "f1072004.mdio" in path:
             # switch
             port = int(utils.get_first_line(os.path.join(iface_path, "phys_port_name"))[1:])
             # phys_port_name is "p{number}", e.g. 'p1' - remove leading p and
             # convert to int
-            append_iface(iface, "eth", "eth", "LAN"+str(port), macaddr)
+            append_iface(iface, "eth", "eth", "LAN" + str(port), macaddr)
         elif "f1034000.ethernet" in path:
             # WAN port
             append_iface(iface, "eth", "eth", "WAN", macaddr)
@@ -56,7 +60,7 @@ def get_interfaces():
                 slot = m.group(1)
                 append_iface(iface, "wifi", "pci", slot, macaddr)
             else:
-                logger.warn("unknown PCI slot module")
+                logger.warning("unknown PCI slot module")
         elif "f10f0000.usb3" in path:
             # front USB3.0
             append_iface(iface, utils.find_iface_type(iface), "usb", "front", macaddr)
@@ -74,5 +78,5 @@ def get_interfaces():
             pass
         # TODO: add SFP - once it starts to work
         else:
-            logger.warn("unknown interface type: %s", iface)
+            logger.warning("unknown interface type: %s", iface)
     return ifaces
