@@ -61,10 +61,10 @@ def get_interfaces() -> typing.Dict[str, dict]:
                 logger.warning("unknown PCI slot module")
         elif "f10f0000.usb3" in path:
             # front USB3.0
-            utils.append_iface(ifaces, iface_name, iface_type, "usb", "front", macaddr, slot_path=path)
+            utils.append_iface(ifaces, iface_name, iface_type, "usb", "USB Front", macaddr, slot_path=path)
         elif "f10f8000.usb3" in path:
             # rear USB3.0
-            utils.append_iface(ifaces, iface_name, iface_type, "usb", "rear", macaddr, slot_path=path)
+            utils.append_iface(ifaces, iface_name, iface_type, "usb", "USB Rear", macaddr, slot_path=path)
         elif "f1058000.usb" in path:
             # USB2.0 on the PCI connector 3
             utils.append_iface(ifaces, iface_name, iface_type, "pci", "3", macaddr, slot_path=path)

@@ -1,7 +1,7 @@
 {
   "eth2": {"bus": "eth", "link_speed": 0, "module_id": 0, "slot": "WAN", "state": "down", "type": "eth", "macaddr": "d8:58:d7:00:92:9e"},
-  "eth3": {"bus": "usb", "link_speed": 0, "module_id": 0, "slot": "rear", "state": "down", "type": "eth", "macaddr": "00:0e:c6:e2:13:9a"},
-  "eth4": {"bus": "usb", "link_speed": 0, "module_id": 0, "slot": "front", "state": "down", "type": "eth", "macaddr": "00:50:b6:11:f3:93"},
+  "eth3": {"bus": "usb", "link_speed": 0, "module_id": 0, "slot": "USB Rear", "state": "down", "type": "eth", "macaddr": "00:0e:c6:e2:13:9a"},
+  "eth4": {"bus": "usb", "link_speed": 0, "module_id": 0, "slot": "USB Front", "state": "down", "type": "eth", "macaddr": "00:50:b6:11:f3:93"},
   "lan0": {"bus": "eth", "link_speed": 0, "module_id": 0, "slot": "LAN0", "state": "down", "type": "eth", "macaddr": "d8:58:d7:00:92:9d"},
   "lan1": {"bus": "eth", "link_speed": 0, "module_id": 0, "slot": "LAN1", "state": "down", "type": "eth", "macaddr": "d8:58:d7:00:92:9d"},
   "lan2": {"bus": "eth", "link_speed": 0, "module_id": 0, "slot": "LAN2", "state": "down", "type": "eth", "macaddr": "d8:58:d7:00:92:9d"},
