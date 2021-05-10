@@ -1,22 +1,14 @@
-image: registry.labs.nic.cz/turris/turrishw
+image: registry.labs.nic.cz/turris/turrishw/python3.7
 
 stages:
   - test
 
-python2:
-  stage: test
-  before_script:
-    - pip install --upgrade pytest
-    - pip install .
-    - export LD_LIBRARY_PATH=/usr/local/lib
-  script:
-    - python -m pytest -vv tests
-
 python3:
   stage: test
   before_script:
-    - pip3 install --upgrade pytest
-    - pip3 install .
-    - export LD_LIBRARY_PATH=/usr/local/lib
+    - pip install virtualenv
+    - virtualenv -p "$(which python)" /tmp/test
+    - source /tmp/test/bin/activate
+    - pip install .
   script:
-    - python3 -m pytest -vv tests
+    - pytest-3 -vv tests
