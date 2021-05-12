@@ -34,11 +34,6 @@ def get_interfaces():
     def append_iface(iface, if_type, bus, port, macaddr):
         ifaces.append(utils.iface_info(iface, if_type, bus, 0, str(port), macaddr))
 
-    major_version = utils.get_TOS_major_version()
-    if major_version < 4:
-        logger.warning("Unsupported TOS version (on Turris omnia): %d", major_version)
-        return []
-
     ifaces = []
     for iface in utils.get_ifaces():
         path = os.readlink(utils.inject_file_root("sys/class/net", iface))
