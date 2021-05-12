@@ -1,5 +1,5 @@
 import logging
-from . import mox, omnia, utils
+from . import mox, omnia, turris1x, utils
 
 logger = logging.getLogger(__name__)
 
@@ -8,6 +8,7 @@ def get_model():
     MODEL_MAP = {
         "CZ.NIC Turris Mox Board": "MOX",
         "Turris Omnia": "OMNIA",
+        "Turris": "TURRIS1X",
     }
 
     model = utils.get_first_line(utils.inject_file_root('sys/firmware/devicetree/base/model'))
@@ -20,6 +21,7 @@ def get_ifaces():
     MODEL_MAP = {
         "MOX": mox,
         "OMNIA": omnia,
+        "TURRIS1X": turris1x,
     }
 
     hw_model = get_model()

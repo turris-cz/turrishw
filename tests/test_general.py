@@ -35,7 +35,7 @@ def set_root(request, monkeypatch, tmpdir):
         yield result_json
 
 
-@pytest.mark.parametrize('set_root', ['mox1', 'mox2', 'mox3', 'omnia'], indirect=True)
+@pytest.mark.parametrize('set_root', ['mox1', 'mox2', 'mox3', 'omnia', 'turris'], indirect=True)
 def test_get_interfaces(set_root):
     with open(set_root) as file:
         assert json.load(file) == turrishw.get_ifaces()
