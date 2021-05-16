@@ -9,3 +9,8 @@ python3:
   stage: test
   script:
     - tox -e py37
+
+lint:
+  stage: test
+  script:
+    - tox -e lint
