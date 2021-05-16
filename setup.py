@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Copyright (c) 2018, CZ.NIC, z.s.p.o. (http://www.nic.cz/)
+# Copyright (c) 2018-2021, CZ.NIC, z.s.p.o. (http://www.nic.cz/)
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -32,6 +32,6 @@ setup(
     url="https://gitlab.labs.nic.cz/turris/turrishw",
     author="CZ.NIC, z. s. p. o.",
     license="MIT",
-
-    packages=['turrishw']
+    packages=['turrishw'],
+    extras_require={"tests": "pytest"}
 )

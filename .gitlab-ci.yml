@@ -1,14 +1,11 @@
 image: registry.labs.nic.cz/turris/turrishw/python3.7
+before_script:
+    - pip install tox
 
 stages:
   - test
 
 python3:
   stage: test
-  before_script:
-    - pip install virtualenv
-    - virtualenv -p "$(which python)" /tmp/test
-    - source /tmp/test/bin/activate
-    - pip install .
   script:
-    - pytest-3 -vv tests
+    - tox -e py37
