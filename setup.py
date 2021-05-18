@@ -27,9 +27,9 @@ from setuptools import setup
 
 setup(
     name='turrishw',
-    version='0.4.2',
+    version='0.5.0',
     description="Turris hardware detection/query tool.",
-    url="https://gitlab.labs.nic.cz/turris/turrishw",
+    url="https://gitlab.nic.cz/turris/turrishw",
     author="CZ.NIC, z. s. p. o.",
     license="MIT",
     packages=['turrishw'],
