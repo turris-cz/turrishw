@@ -68,7 +68,9 @@ def find_iface_type(iface):
 def get_ifaces():
     path = inject_file_root('sys/class/net')
     for f in os.listdir(path):
-        yield f
+        # we only need links, not files
+        if os.path.islink(os.path.join(path, f)):
+            yield f
 
 
 def get_TOS_major_version():
