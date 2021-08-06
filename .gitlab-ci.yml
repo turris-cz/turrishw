@@ -1,4 +1,4 @@
-image: registry.labs.nic.cz/turris/turrishw/python3.7
+image: registry.nic.cz/turris/turrishw/python3.7
 before_script:
     - pip install tox
 
