@@ -1,4 +1,4 @@
-# Copyright (c) 2018-2021, CZ.NIC, z.s.p.o. (http://www.nic.cz/)
+# Copyright (c) 2018-2022, CZ.NIC, z.s.p.o. (http://www.nic.cz/)
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -49,7 +49,9 @@ def get_iface_state(iface):
 def get_iface_speed(iface):
     try:
         speed = get_first_line(inject_file_root('sys/class/net/{}/speed'.format(iface)))
-        return int(speed)
+        speed = int(speed)
+        # sometimes we can get -1 from sysfs, meaning speed is not negotiated yet
+        return max(speed, 0)
     except (OSError, ValueError):
         # can't read the file or can't convert value to int (file is empty)
         return 0
