@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Copyright (c) 2018-2021, CZ.NIC, z.s.p.o. (http://www.nic.cz/)
+# Copyright (c) 2018-2022, CZ.NIC, z.s.p.o. (http://www.nic.cz/)
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -27,10 +27,11 @@ from setuptools import setup
 
 setup(
     name='turrishw',
-    version='0.5.1',
+    version='0.5.2',
     description="Turris hardware detection/query tool.",
     url="https://gitlab.nic.cz/turris/turrishw",
     author="CZ.NIC, z. s. p. o.",
+    author_email='packaging@turris.cz',
     license="MIT",
     packages=['turrishw'],
     extras_require={"tests": "pytest"}
