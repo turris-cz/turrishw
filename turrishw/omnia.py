@@ -1,4 +1,4 @@
-# Copyright (c) 2018-2021, CZ.NIC, z.s.p.o. (http://www.nic.cz/)
+# Copyright (c) 2018-2022, CZ.NIC, z.s.p.o. (http://www.nic.cz/)
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -22,17 +22,18 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 # EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-import os
 import logging
+import os
 import re
+
 from . import utils
 
 logger = logging.getLogger(__name__)
 
 
 def get_interfaces():
-    def append_iface(iface, if_type, bus, port, macaddr):
-        ifaces.append(utils.iface_info(iface, if_type, bus, 0, str(port), macaddr))
+    def append_iface(iface: str, if_type: str, bus: str, port_label: str, macaddr: str):
+        ifaces.append(utils.iface_info(iface, if_type, bus, 0, port_label, macaddr))
 
     ifaces = []
     for iface in utils.get_ifaces():
@@ -41,10 +42,8 @@ def get_interfaces():
         macaddr = utils.get_first_line(os.path.join(iface_path, "address")).strip()
         if "f1072004.mdio" in path:
             # switch
-            port = int(utils.get_first_line(os.path.join(iface_path, "phys_port_name"))[1:])
-            # phys_port_name is "p{number}", e.g. 'p1' - remove leading p and
-            # convert to int
-            append_iface(iface, "eth", "eth", "LAN" + str(port), macaddr)
+            port_label = utils.get_iface_label(iface_path)
+            append_iface(iface, "eth", "eth", port_label, macaddr)
         elif "f1034000.ethernet" in path:
             # WAN port
             append_iface(iface, "eth", "eth", "WAN", macaddr)
@@ -64,7 +63,7 @@ def get_interfaces():
             append_iface(iface, utils.find_iface_type(iface), "usb", "rear", macaddr)
         elif "f1058000.usb" in path:
             # USB2.0 on the PCI connector 3
-            append_iface(iface, utils.find_iface_type(iface), "pci", 3, macaddr)
+            append_iface(iface, utils.find_iface_type(iface), "pci", "3", macaddr)
         elif "f1070000.ethernet" in path or "f1030000.ethernet" in path:
             # ethernet interfaces connected to switch - ignore them
             pass
