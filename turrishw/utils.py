@@ -57,6 +57,14 @@ def get_iface_speed(iface):
         return 0
 
 
+def get_iface_label(iface_path: str) -> str:
+    """Get inteface label, e.g. lan1, by given interface path
+
+    Search /sys subsystem for `<iface_path>/of_node/label`.
+    """
+    return get_first_line(os.path.join(iface_path, "of_node/label")).rstrip("\x00").upper()
+
+
 def find_iface_type(iface):
     path = inject_file_root('sys/class/net', iface)
     if os.path.isdir(os.path.join(path, "phy80211")):

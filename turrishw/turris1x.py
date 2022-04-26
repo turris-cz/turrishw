@@ -1,4 +1,4 @@
-# Copyright (c) 2021, CZ.NIC, z.s.p.o. (https://www.nic.cz/)
+# Copyright (c) 2021-2022, CZ.NIC, z.s.p.o. (https://www.nic.cz/)
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,23 +25,24 @@
 
 """Implementation of Turris 1.x router HW"""
 
-import os
 import logging
+import os
 import re
+
 from . import utils
 
 logger = logging.getLogger(__name__)
 
 
 def get_interfaces():
-    def append_iface(iface, if_type, bus, port, macaddr):
-        ifaces.append(utils.iface_info(iface, if_type, bus, 0, str(port), macaddr))
+    def append_iface(iface: str, if_type: str, bus: str, port_label: str, macaddr: str):
+        ifaces.append(utils.iface_info(iface, if_type, bus, 0, port_label, macaddr))
 
     def detect_pcie_wifi(iface, path, regex):
         """Try to detect wifi interface based on regex"""
         m = re.search(regex, path)
         if m:
-            append_iface(iface, "wifi", "pci", 0, macaddr)
+            append_iface(iface, "wifi", "pci", "0", macaddr)
         else:
             logger.warning("unknown PCI slot module")
 
@@ -51,9 +52,8 @@ def get_interfaces():
         iface_path = utils.inject_file_root("sys/class/net", iface)
         macaddr = utils.get_first_line(os.path.join(iface_path, "address")).strip()
         if "mdio@ffe24520" in path:  # Switch exported ports
-            # phys_port_name is "p{number}", e.g. 'p1' - remove leading p and
-            port = int(utils.get_first_line(os.path.join(iface_path, "phys_port_name"))[1:])
-            append_iface(iface, "eth", "eth", "LAN" + str(port), macaddr)
+            port_label = utils.get_iface_label(iface_path)
+            append_iface(iface, "eth", "eth", port_label, macaddr)
         elif "ffe26000.ethernet" in path:  # WAN port
             append_iface(iface, "eth", "eth", "WAN", macaddr)
         elif "pci9000:02" in path:  # pcie wifi
@@ -65,7 +65,7 @@ def get_interfaces():
             append_iface(iface, utils.find_iface_type(iface), "usb", "front", macaddr)
             append_iface(iface, utils.find_iface_type(iface), "usb", "rear", macaddr)
         elif "f1058000.usb" in path:
-            append_iface(iface, utils.find_iface_type(iface), "pci", 3, macaddr)
+            append_iface(iface, utils.find_iface_type(iface), "pci", "3", macaddr)
         elif "ffe24000.ethernet" in path or "ffe25000.ethernet" in path:
             # ethernet interfaces connected to switch - ignore them
             pass
