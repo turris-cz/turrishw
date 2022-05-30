@@ -23,6 +23,8 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 # EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 import os
+import re
+import typing
 
 # ENV variable is needed for blackbox testing with foris-controller
 TURRISHW_FILE_ROOT = os.getenv("TURRISHW_ROOT", "/")
@@ -96,9 +98,28 @@ def iface_info(iface, if_type, bus, module_id, slot, macaddr):
             "link_speed": get_iface_speed(iface) if state == "up" else 0}
 
 
-def ifaces_array2dict(ifaces_array):
+def ifaces_array2dict(ifaces_array: typing.List[dict]) -> typing.Dict[str, dict]:
+    """Convert array of interfaces dict objects to dictionary with `name` as key and the rest as value.
+
+    Reading interfaces from /sys might return them in different order based on tool used.
+    See difference between order of items for `os.listdir()` vs `ls` in shell.
+
+    It will be more useful for consumer of `turrishw` to get interfaces sorted in resulting dictionary
+    to avoid dealing with the possibly random order of interfaces.
+
+    Thus return them sorted.
+    """
     d = {}
-    for iface in ifaces_array:
-        name = iface["name"]
-        d[name] = {i: iface[i] for i in iface if i != 'name'}
+    ifaces = sort_by_natural_order(ifaces_array)
+    for iface in ifaces:
+        name = iface.pop("name")
+        d[name] = iface
     return d
+
+
+def sort_by_natural_order(items: typing.List[dict]) -> typing.List[dict]:
+    """Sort interfaces in list by their `name` by natural order."""
+    return sorted(
+        items,
+        key=lambda l: [int(s) if s.isdigit() else s.lower() for s in re.split(r"(\d+)", l["name"])]
+    )

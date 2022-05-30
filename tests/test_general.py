@@ -41,4 +41,9 @@ def set_root(request, monkeypatch, tmpdir):
 )
 def test_get_interfaces(set_root):
     with open(set_root) as file:
-        assert json.load(file) == turrishw.get_ifaces()
+        thw_ifaces = turrishw.get_ifaces()
+        json_data = json.load(file)
+        assert json_data == thw_ifaces
+
+        # test order of interfaces
+        assert [*json_data.keys()] == [*thw_ifaces.keys()]
