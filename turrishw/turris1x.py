@@ -56,10 +56,10 @@ def get_interfaces():
             append_iface(iface, "eth", "eth", port_label, macaddr)
         elif "ffe26000.ethernet" in path:  # WAN port
             append_iface(iface, "eth", "eth", "WAN", macaddr)
-        elif "pci9000:02" in path:  # pcie wifi
-            detect_pcie_wifi(iface, path, r"/9000:02:00\.0/")
-        elif "pcia000:04" in path:  # pcie wifi
-            detect_pcie_wifi(iface, path, r"/a000:04:00\.0/")
+        elif "pci0001:02" in path:  # pcie wifi
+            detect_pcie_wifi(iface, path, r"/0001:02:00\.0/")
+        elif "pci0002:04" in path:  # pcie wifi
+            detect_pcie_wifi(iface, path, r"/0002:04:00\.0/")
         elif "fsl-ehci.0" in path:
             # back two USB2.0 ports.
             append_iface(iface, utils.find_iface_type(iface), "usb", "front", macaddr)
