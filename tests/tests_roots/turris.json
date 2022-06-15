@@ -1,10 +1,9 @@
 {
   "eth2": {"bus": "eth", "link_speed": 1000, "module_id": 0, "slot": "WAN", "state": "up", "type": "eth", "macaddr": "d8:58:d7:00:05:78"},
-  "lan1": {"bus": "eth", "link_speed": 0,   "module_id": 0, "slot": "LAN1", "state": "down", "type": "eth", "macaddr": "d8:58:d7:00:05:77"},
+  "lan1": {"bus": "eth", "link_speed": 1000, "module_id": 0, "slot": "LAN1", "state": "up", "type": "eth", "macaddr": "d8:58:d7:00:05:77"},
   "lan2": {"bus": "eth", "link_speed": 0,   "module_id": 0, "slot": "LAN2", "state": "down", "type": "eth", "macaddr": "d8:58:d7:00:05:77"},
   "lan3": {"bus": "eth", "link_speed": 0,   "module_id": 0, "slot": "LAN3", "state": "down", "type": "eth", "macaddr": "d8:58:d7:00:05:77"},
   "lan4": {"bus": "eth", "link_speed": 0,   "module_id": 0, "slot": "LAN4", "state": "down", "type": "eth", "macaddr": "d8:58:d7:00:05:77"},
-  "lan5": {"bus": "eth", "link_speed": 1000, "module_id": 0, "slot": "LAN5", "state": "up", "type": "eth", "macaddr": "d8:58:d7:00:05:77"},
-  "wlan0": {"bus": "pci", "link_speed": 0, "module_id": 0, "slot": "0", "state": "down", "type": "wifi", "macaddr": "04:f0:21:24:1d:73"},
-  "wlan1": {"bus": "pci", "link_speed": 0, "module_id": 0, "slot": "0", "state": "down", "type": "wifi", "macaddr": "60:02:b4:7d:86:32"}
+  "lan5": {"bus": "eth", "link_speed": 0, "module_id": 0, "slot": "LAN5", "state": "down", "type": "eth", "macaddr": "d8:58:d7:00:05:77"},
+  "wlan0": {"bus": "pci", "link_speed": 0, "module_id": 0, "slot": "0", "state": "down", "type": "wifi", "macaddr": "60:02:b4:7d:86:32"}
 }
