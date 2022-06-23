@@ -38,6 +38,26 @@ def _get_modules():
     return modules
 
 
+def _get_switch_id(iface_path: str) -> int:
+    """Get id (number) of ethernet switch based on given interface path.
+
+    This is Mox specific function as other Turris devices have fixed ethernet ports layout.
+
+    It is useful to be able to figure out which switch the port belongs to
+    and use that information to determine which physical Mox module that port belongs to.
+
+    Read switch name from the result of `readlink /sys/class/net/<iface>/device/of_node`,
+    and try to match the `switchX@Y` pattern in path.
+    These `switchX@Y` identifiers should remain stable because they are defined in kernel DTS.
+    """
+    link_path = os.readlink(os.path.join(iface_path, "device/of_node"))
+    m = re.search(r"switch([0-2])@[0-9]+$", link_path)  # maximum of three ethernet switches is supported in Mox
+    if not m:
+        return 0  # fallback to 0 (first switch)
+
+    return int(m.group(1))
+
+
 def get_interfaces():
     def append_iface(iface: str, if_type: str, bus: str, module_seq: int, port_label: str, macaddr: str):
         ifaces.append(utils.iface_info(iface, if_type, bus, module_seq, port_label, macaddr))
@@ -59,11 +79,8 @@ def get_interfaces():
         if "d0032004.mdio-mii" in path:
             # MDIO bus on MOXTET - for switches
             port_label = utils.get_iface_label(iface_path)
-            switch_id = int(utils.get_first_line(os.path.join(iface_path, "phys_switch_id"))[0:2])
-            # phys_switch_id is 0{sequence_num}000000, e.g. 00000000 for 1st
-            # switch, 01000000 for 2nd and so on. Don't know why.
-            # take just first 2 letters and convert to int
-            switch_no = switch_idxs[switch_id]
+            switch_id = _get_switch_id(iface_path)
+            switch_no = switch_idxs[switch_id]  # Mox module number based on the actual module topology
             if port_label == "SFP":
                 sfp_seq = get_module_rank("sfp")
                 append_iface(iface, "eth", "sfp", sfp_seq, port_label, macaddr)
