@@ -1,0 +1,5 @@
+{
+    "eth0": {"bus": "eth", "link_speed": 1000, "macaddr": "de:ad:be:ef:99:99", "module_id": 0, "slot": "ETH0", "state": "up", "type": "eth"},
+    "eth1": {"bus": "sfp", "link_speed": 1000, "macaddr": "f2:36:22:4e:38:d3", "module_id": 1, "slot": "SFP", "state": "up", "type": "eth"},
+    "eth1.848": {"bus": "sfp", "link_speed": 1000, "macaddr": "f2:36:22:4e:38:d3", "module_id": 1, "slot": "SFP", "state": "up", "type": "eth", "vlan_id": 848}
+}

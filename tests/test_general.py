@@ -37,7 +37,20 @@ def set_root(request, monkeypatch, tmpdir):
 
 
 @pytest.mark.parametrize(
-    'set_root', ['mox1', 'mox2', 'mox3', 'omnia', 'omnia-lan2-flapping', 'turris'], indirect=True
+    "set_root",
+    [
+        "mox1",
+        "mox2",
+        "mox3",
+        "mox-ac-6.0-vlans",
+        "mox-ad-6.0-vlans",
+        "omnia",
+        "omnia-lan2-flapping",
+        "omnia-6.0-vlans",
+        "turris",
+        "turris-6.0-vlans"
+    ],
+    indirect=True
 )
 def test_get_interfaces(set_root):
     with open(set_root) as file:

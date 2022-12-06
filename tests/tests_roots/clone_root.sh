@@ -40,7 +40,11 @@ scp $ADDR:sys.tar.gz ./
 tar --delay-directory-restore -xzf sys.tar.gz -C "$PTH"
 ssh $ADDR rm sys.tar.gz
 rm sys.tar.gz
-chmod -R +r "$PTH" # Make all files readable because otherwise it makes no sense to have them
 
-mkdir -p "$PTH/proc"
-ssh $ADDR cat /proc/meminfo > "$PTH/proc/meminfo"
+ssh $ADDR tar -czf proc_minimal.tar.gz /proc/net/vlan
+scp $ADDR:proc_minimal.tar.gz ./
+tar -xzf proc_minimal.tar.gz -C "$PTH"
+ssh $ADDR rm proc_minimal.tar.gz
+rm proc_minimal.tar.gz
+
+chmod -R +r "$PTH" # Make all files readable because otherwise it makes no sense to have them

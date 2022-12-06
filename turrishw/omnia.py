@@ -34,46 +34,58 @@ logger = logging.getLogger(__name__)
 
 def get_interfaces() -> typing.Dict[str, dict]:
     def append_iface(name: str, if_type: str, bus: str, port_label: str, macaddr: str):
-        # `module_id` is useful only for Mox, so set module_id = 0 as fallback
-        ifaces[name] = utils.iface_info(name, if_type, bus, 0, port_label, macaddr)
+        ifaces[name] = utils.iface_info(name, if_type, bus, port_label, macaddr)
 
-    ifaces = {}
-    for iface in utils.get_ifaces():
-        path = os.readlink(utils.inject_file_root("sys/class/net", iface))
-        iface_path = utils.inject_file_root("sys/class/net", iface)
+    ifaces: typing.Dict[str, dict] = {}
+    second_pass_ifaces: typing.List[typing.Dict[str, str]] = []
+    vlan_ifaces: typing.List[str] = utils.get_vlan_interfaces()
+
+    # First pass - process the detected physical interfaces
+    for iface_name in utils.get_ifaces():
+        iface_type = utils.find_iface_type(iface_name)
+        path = os.readlink(utils.inject_file_root("sys/class/net", iface_name))
+        iface_path = utils.inject_file_root("sys/class/net", iface_name)
         macaddr = utils.get_first_line(iface_path / "address").strip()
 
         if "f1072004.mdio" in path:
             # switch
             port_label = utils.get_iface_label(iface_path)
-            append_iface(iface, "eth", "eth", port_label, macaddr)
+            append_iface(iface_name, "eth", "eth", port_label, macaddr)
         elif "f1034000.ethernet" in path:
             # WAN port
-            append_iface(iface, "eth", "eth", "WAN", macaddr)
+            append_iface(iface_name, "eth", "eth", "WAN", macaddr)
         elif "pci0000:00" in path:
             # PCI
             m = re.search(r'/0000:00:0([0-3])\.0/', path)
             if m:
                 slot = m.group(1)
-                append_iface(iface, "wifi", "pci", slot, macaddr)
+                append_iface(iface_name, "wifi", "pci", slot, macaddr)
             else:
                 logger.warning("unknown PCI slot module")
         elif "f10f0000.usb3" in path:
             # front USB3.0
-            append_iface(iface, utils.find_iface_type(iface), "usb", "front", macaddr)
+            append_iface(iface_name, iface_type, "usb", "front", macaddr)
         elif "f10f8000.usb3" in path:
             # rear USB3.0
-            append_iface(iface, utils.find_iface_type(iface), "usb", "rear", macaddr)
+            append_iface(iface_name, iface_type, "usb", "rear", macaddr)
         elif "f1058000.usb" in path:
             # USB2.0 on the PCI connector 3
-            append_iface(iface, utils.find_iface_type(iface), "pci", "3", macaddr)
+            append_iface(iface_name, iface_type, "pci", "3", macaddr)
         elif "f1070000.ethernet" in path or "f1030000.ethernet" in path:
             # ethernet interfaces connected to switch - ignore them
             pass
         elif "virtual" in path:
             # virtual ifaces (loopback, bridges, ...) - we don't care about these
-            pass
+            #
+            # `utils.get_ifaces` can return interfaces in random order, so interfaces with VLAN assigned
+            # will be processed in second pass to ensure that its parent interface exists and is already processed.
+            if iface_name in vlan_ifaces:
+                second_pass_ifaces.append({"name": iface_name, "macaddr": macaddr})
         # TODO: add SFP - once it starts to work
         else:
-            logger.warning("unknown interface type: %s", iface)
+            logger.warning("unknown interface type: %s", iface_name)
+
+    # Second pass - process virtual interfaces with VLAN assigned.
+    utils.process_vlan_interfaces(ifaces, second_pass_ifaces)
+
     return ifaces

@@ -37,7 +37,7 @@ logger = logging.getLogger(__name__)
 
 def get_interfaces() -> typing.Dict[str, dict]:
     def append_iface(name: str, if_type: str, bus: str, port_label: str, macaddr: str):
-        ifaces[name] = utils.iface_info(name, if_type, bus, 0, port_label, macaddr)
+        ifaces[name] = utils.iface_info(name, if_type, bus, port_label, macaddr)
 
     def detect_pcie_wifi(iface, path, regex):
         """Try to detect wifi interface based on regex"""
@@ -47,32 +47,42 @@ def get_interfaces() -> typing.Dict[str, dict]:
         else:
             logger.warning("unknown PCI slot module")
 
-    ifaces = {}
-    for iface in utils.get_ifaces():
-        path = os.readlink(utils.inject_file_root("sys/class/net", iface))
-        iface_path = utils.inject_file_root("sys/class/net", iface)
+    ifaces: typing.Dict[str, dict] = {}
+    second_pass_ifaces: typing.List[typing.Dict[str, str]] = []
+    vlan_ifaces: typing.List[str] = utils.get_vlan_interfaces()
+
+    # First pass - process the detected physical interfaces
+    for iface_name in utils.get_ifaces():
+        path = os.readlink(utils.inject_file_root("sys/class/net", iface_name))
+        iface_path = utils.inject_file_root("sys/class/net", iface_name)
         macaddr = utils.get_first_line(iface_path / "address").strip()
+
         if "mdio@ffe24520" in path:  # Switch exported ports
             port_label = utils.get_iface_label(iface_path)
-            append_iface(iface, "eth", "eth", port_label, macaddr)
+            append_iface(iface_name, "eth", "eth", port_label, macaddr)
         elif "ffe26000.ethernet" in path:  # WAN port
-            append_iface(iface, "eth", "eth", "WAN", macaddr)
+            append_iface(iface_name, "eth", "eth", "WAN", macaddr)
         elif "pci0001:02" in path:  # pcie wifi
-            detect_pcie_wifi(iface, path, r"/0001:02:00\.0/")
+            detect_pcie_wifi(iface_name, path, r"/0001:02:00\.0/")
         elif "pci0002:04" in path:  # pcie wifi
-            detect_pcie_wifi(iface, path, r"/0002:04:00\.0/")
+            detect_pcie_wifi(iface_name, path, r"/0002:04:00\.0/")
         elif "fsl-ehci.0" in path:
             # back two USB2.0 ports.
-            append_iface(iface, utils.find_iface_type(iface), "usb", "front", macaddr)
-            append_iface(iface, utils.find_iface_type(iface), "usb", "rear", macaddr)
+            append_iface(iface_name, utils.find_iface_type(iface_name), "usb", "front", macaddr)
+            append_iface(iface_name, utils.find_iface_type(iface_name), "usb", "rear", macaddr)
         elif "f1058000.usb" in path:
-            append_iface(iface, utils.find_iface_type(iface), "pci", "3", macaddr)
+            append_iface(iface_name, utils.find_iface_type(iface_name), "pci", "3", macaddr)
         elif "ffe24000.ethernet" in path or "ffe25000.ethernet" in path:
             # ethernet interfaces connected to switch - ignore them
             pass
         elif "virtual" in path:
             # virtual ifaces (loopback, bridges, ...) - we don't care about these
-            pass
+            if iface_name in vlan_ifaces:
+                second_pass_ifaces.append({"name": iface_name, "macaddr": macaddr})
         else:
-            logger.warning("unknown interface type: %s", iface)
+            logger.warning("unknown interface type: %s", iface_name)
+
+    # Second pass - process virtual interfaces with VLAN assigned.
+    utils.process_vlan_interfaces(ifaces, second_pass_ifaces)
+
     return ifaces

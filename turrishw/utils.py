@@ -86,17 +86,91 @@ def get_ifaces():
             yield f.name
 
 
+def get_vlan_interfaces() -> typing.List[str]:
+    """Get name of all interfaces, which has VLAN id set.
+
+    Take a look into `/proc/net/vlan/` provided by kernel.
+    Based on the kernel documentation, there should be only only `config` and interface-like files
+    (i.e. <interface_name>.<vlan_number>) in `/proc/net/vlan`.
+    Ignore the `config` and fetch all interface-like looking files.
+
+    For instance:
+
+    ```
+    # ls /proc/net/vlan/
+    config    eth2.128
+    ```
+
+    Please note that alternative approach could be to parse `/proc/net/vlan/config` as single source of truth,
+    to get all interfaces with VLAN id.
+    But that would mean parsing text file, which formatting could be less stable between kernel versions
+    than vlan interfaces representation on `/proc` subsystem.
+
+    Return list of interfaces names.
+    """
+
+    path = inject_file_root("proc/net/vlan")
+    if not path.is_dir():
+        return []
+
+    return [iface.name for iface in path.glob("*.*")]
+
+
+def process_vlan_interfaces(
+    first_pass_ifaces: typing.Dict[str, dict],
+    second_pass_ifaces: typing.List[typing.Dict[str, str]]
+) -> None:
+    """Process virtual interfaces that have VLAN ID assigned.
+    Reuse its parent interface properties and fill in the differences.
+
+    For instance: eth2.100 should always be of the same type (wired ethernet) as its parent (eth2),
+    but it could have a different MAC address.
+
+    first_pass_ifaces: Physical interfaces detected in first pass processing.
+    second_pass_ifaces: Virtual interfaces that need to be matched to their parent interfaces.
+    """
+    for virt_iface in second_pass_ifaces:
+        iface_name = virt_iface["name"]
+        macaddr = virt_iface["macaddr"]
+        base_iface, vlan_id = iface_name.rsplit(".", maxsplit=1)
+        vlan_id_no = int(vlan_id)
+
+        # Parent interface (e.g. eth2) must be available and processed if we intend to reference it.
+        # If we can't find the parent, ignore this interface.
+        if base_iface in first_pass_ifaces:
+            parent = first_pass_ifaces[base_iface]
+            first_pass_ifaces[iface_name] = iface_info(
+                iface_name, parent["type"], parent["bus"], parent["slot"], macaddr, vlan_id_no, parent["module_id"]
+            )
+
+
 def get_TOS_major_version():
     version = get_first_line(inject_file_root('etc/turris-version'))
     parts = version.split('.')
     return int(parts[0])
 
 
-def iface_info(iface, if_type, bus, module_id, slot, macaddr):
-    state = get_iface_state(iface)
-    return {"name": iface, "type": if_type, "bus": bus, "state": state,
-            "slot": slot, "module_id": module_id, 'macaddr': macaddr,
-            "link_speed": get_iface_speed(iface) if state == "up" else 0}
+def iface_info(
+    iface_name: str,
+    if_type: str,
+    bus: str,
+    port_label: str,
+    macaddr: str,
+    vlan_id: typing.Optional[int] = None,
+    module_id: int = 0,  # `module_id` is useful only for Mox, fallback to 0 for other HW
+):
+    state = get_iface_state(iface_name)
+    iface_speed = get_iface_speed(iface_name) if state == "up" else 0
+    res = {
+        "type": if_type, "bus": bus, "state": state,
+        "slot": port_label, "module_id": module_id, 'macaddr': macaddr,
+        "link_speed": iface_speed
+    }
+
+    if vlan_id is not None:
+        res["vlan_id"] = vlan_id
+
+    return res
 
 
 def sort_by_natural_order(interfaces: typing.Dict[str, dict]) -> typing.Dict[str, dict]:

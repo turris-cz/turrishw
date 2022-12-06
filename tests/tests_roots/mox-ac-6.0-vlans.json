@@ -1,0 +1,9 @@
+{
+    "eth0": {"bus": "eth", "link_speed": 1000, "macaddr": "de:ad:be:ef:99:99", "module_id": 0, "slot": "ETH0", "state": "up", "type": "eth"},
+    "eth0.100": {"bus": "eth", "link_speed": 1000, "macaddr": "de:ad:be:ef:99:99", "module_id": 0, "slot": "ETH0", "state": "up", "type": "eth", "vlan_id": 100},
+    "lan1": {"bus": "eth", "link_speed": 0, "macaddr": "f2:36:22:4e:38:d3", "module_id": 1, "slot": "LAN1", "state": "up", "type": "eth"},
+    "lan2": {"bus": "eth", "link_speed": 0, "macaddr": "f2:36:22:4e:38:d3", "module_id": 1, "slot": "LAN2", "state": "down", "type": "eth"},
+    "lan2.200": {"bus": "eth", "link_speed": 0, "macaddr": "f2:36:22:4e:38:d3", "module_id": 1, "slot": "LAN2", "state": "down","type": "eth", "vlan_id": 200},
+    "lan3": {"bus": "eth", "link_speed": 0, "macaddr": "f2:36:22:4e:38:d3", "module_id": 1, "slot": "LAN3", "state": "down", "type": "eth"},
+    "lan4": {"bus": "eth", "link_speed": 0, "macaddr": "f2:36:22:4e:38:d3", "module_id": 1, "slot": "LAN4", "state": "down", "type": "eth"}
+}
