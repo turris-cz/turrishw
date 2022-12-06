@@ -25,6 +25,7 @@
 import logging
 import os
 import re
+import typing
 
 from . import utils
 
@@ -58,9 +59,9 @@ def _get_switch_id(iface_path: str) -> int:
     return int(m.group(1))
 
 
-def get_interfaces():
-    def append_iface(iface: str, if_type: str, bus: str, module_seq: int, port_label: str, macaddr: str):
-        ifaces.append(utils.iface_info(iface, if_type, bus, module_seq, port_label, macaddr))
+def get_interfaces() -> typing.Dict[str, dict]:
+    def append_iface(name: str, if_type: str, bus: str, module_seq: int, port_label: str, macaddr: str):
+        ifaces[name] = utils.iface_info(name, if_type, bus, module_seq, port_label, macaddr)
 
     def get_module_rank(name):
         seq = [i + 1 for i, s in enumerate(modules) if name in s]
@@ -70,7 +71,7 @@ def get_interfaces():
             return 0
 
     modules = _get_modules()
-    ifaces = []
+    ifaces = {}
     switch_idxs = [i + 1 for i, s in enumerate(modules) if 'topaz' in s or 'peridot' in s]
     for iface in utils.get_ifaces():
         path = os.readlink(utils.inject_file_root("sys/class/net", iface))

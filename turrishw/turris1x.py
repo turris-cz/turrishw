@@ -28,15 +28,16 @@
 import logging
 import os
 import re
+import typing
 
 from . import utils
 
 logger = logging.getLogger(__name__)
 
 
-def get_interfaces():
-    def append_iface(iface: str, if_type: str, bus: str, port_label: str, macaddr: str):
-        ifaces.append(utils.iface_info(iface, if_type, bus, 0, port_label, macaddr))
+def get_interfaces() -> typing.Dict[str, dict]:
+    def append_iface(name: str, if_type: str, bus: str, port_label: str, macaddr: str):
+        ifaces[name] = utils.iface_info(name, if_type, bus, 0, port_label, macaddr)
 
     def detect_pcie_wifi(iface, path, regex):
         """Try to detect wifi interface based on regex"""
@@ -46,7 +47,7 @@ def get_interfaces():
         else:
             logger.warning("unknown PCI slot module")
 
-    ifaces = []
+    ifaces = {}
     for iface in utils.get_ifaces():
         path = os.readlink(utils.inject_file_root("sys/class/net", iface))
         iface_path = utils.inject_file_root("sys/class/net", iface)

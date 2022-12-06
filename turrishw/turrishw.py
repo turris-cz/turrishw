@@ -36,4 +36,9 @@ def get_ifaces():
         logger.warning("Unsupported model: %s", hw_model)
         return {}
 
-    return utils.ifaces_array2dict(model.get_interfaces())
+    # Reading interfaces from /sys might return them in different order based on tool used.
+    # See difference between order of items for `os.listdir()` vs `ls` in shell.
+    #
+    # It will be more useful for consumer of `turrishw` to get interfaces sorted in resulting dictionary
+    # to avoid dealing with the possibly random order of interfaces.
+    return utils.sort_by_natural_order(model.get_interfaces())

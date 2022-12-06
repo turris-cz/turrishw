@@ -25,17 +25,19 @@
 import logging
 import os
 import re
+import typing
 
 from . import utils
 
 logger = logging.getLogger(__name__)
 
 
-def get_interfaces():
-    def append_iface(iface: str, if_type: str, bus: str, port_label: str, macaddr: str):
-        ifaces.append(utils.iface_info(iface, if_type, bus, 0, port_label, macaddr))
+def get_interfaces() -> typing.Dict[str, dict]:
+    def append_iface(name: str, if_type: str, bus: str, port_label: str, macaddr: str):
+        # `module_id` is useful only for Mox, so set module_id = 0 as fallback
+        ifaces[name] = utils.iface_info(name, if_type, bus, 0, port_label, macaddr)
 
-    ifaces = []
+    ifaces = {}
     for iface in utils.get_ifaces():
         path = os.readlink(utils.inject_file_root("sys/class/net", iface))
         iface_path = utils.inject_file_root("sys/class/net", iface)
