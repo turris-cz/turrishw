@@ -51,7 +51,7 @@ def get_interfaces() -> typing.Dict[str, dict]:
     for iface in utils.get_ifaces():
         path = os.readlink(utils.inject_file_root("sys/class/net", iface))
         iface_path = utils.inject_file_root("sys/class/net", iface)
-        macaddr = utils.get_first_line(os.path.join(iface_path, "address")).strip()
+        macaddr = utils.get_first_line(iface_path / "address").strip()
         if "mdio@ffe24520" in path:  # Switch exported ports
             port_label = utils.get_iface_label(iface_path)
             append_iface(iface, "eth", "eth", port_label, macaddr)

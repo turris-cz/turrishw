@@ -26,6 +26,7 @@ import logging
 import os
 import re
 import typing
+from pathlib import Path
 
 from . import utils
 
@@ -39,7 +40,7 @@ def _get_modules():
     return modules
 
 
-def _get_switch_id(iface_path: str) -> int:
+def _get_switch_id(iface_path: Path) -> int:
     """Get id (number) of ethernet switch based on given interface path.
 
     This is Mox specific function as other Turris devices have fixed ethernet ports layout.
@@ -51,7 +52,7 @@ def _get_switch_id(iface_path: str) -> int:
     and try to match the `switchX@Y` pattern in path.
     These `switchX@Y` identifiers should remain stable because they are defined in kernel DTS.
     """
-    link_path = os.readlink(os.path.join(iface_path, "device/of_node"))
+    link_path = os.readlink(iface_path / "device/of_node")
     m = re.search(r"switch([0-2])@[0-9]+$", link_path)  # maximum of three ethernet switches is supported in Mox
     if not m:
         return 0  # fallback to 0 (first switch)
@@ -76,7 +77,8 @@ def get_interfaces() -> typing.Dict[str, dict]:
     for iface in utils.get_ifaces():
         path = os.readlink(utils.inject_file_root("sys/class/net", iface))
         iface_path = utils.inject_file_root("sys/class/net", iface)
-        macaddr = utils.get_first_line(os.path.join(iface_path, "address")).strip()
+        macaddr = utils.get_first_line(iface_path / "address").strip()
+
         if "d0032004.mdio-mii" in path:
             # MDIO bus on MOXTET - for switches
             port_label = utils.get_iface_label(iface_path)

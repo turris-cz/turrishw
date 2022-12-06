@@ -25,17 +25,18 @@
 import os
 import re
 import typing
+from pathlib import Path
 
 # ENV variable is needed for blackbox testing with foris-controller
 TURRISHW_FILE_ROOT = os.getenv("TURRISHW_ROOT", "/")
 
 
-def inject_file_root(*paths):
+def inject_file_root(*paths) -> Path:
     """Inject TURRISHW_FILE_ROOT prefix to file path(s)"""
-    return os.path.join(TURRISHW_FILE_ROOT, *paths)
+    return Path(TURRISHW_FILE_ROOT, *paths)
 
 
-def get_first_line(filename):
+def get_first_line(filename: Path) -> str:
     with open(filename, 'r') as f:
         return f.readline()
 
@@ -59,19 +60,19 @@ def get_iface_speed(iface):
         return 0
 
 
-def get_iface_label(iface_path: str) -> str:
+def get_iface_label(iface_path: Path) -> str:
     """Get inteface label, e.g. lan1, by given interface path
 
     Search /sys subsystem for `<iface_path>/of_node/label`.
     """
-    return get_first_line(os.path.join(iface_path, "of_node/label")).rstrip("\x00").upper()
+    return get_first_line(iface_path / "of_node/label").rstrip("\x00").upper()
 
 
 def find_iface_type(iface):
     path = inject_file_root('sys/class/net', iface)
-    if os.path.isdir(os.path.join(path, "phy80211")):
+    if path.joinpath("phy80211").is_dir():
         return "wifi"
-    if os.path.isdir(os.path.join(path, "qmi")):
+    if path.joinpath("qmi").is_dir():
         return "wwan"
     # TODO: support other protocols of LTE modems
     return "eth"
@@ -79,10 +80,10 @@ def find_iface_type(iface):
 
 def get_ifaces():
     path = inject_file_root('sys/class/net')
-    for f in os.listdir(path):
+    for f in path.iterdir():
         # we only need links, not files
-        if os.path.islink(os.path.join(path, f)):
-            yield f
+        if f.is_symlink():
+            yield f.name
 
 
 def get_TOS_major_version():
