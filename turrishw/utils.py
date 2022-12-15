@@ -178,6 +178,6 @@ def sort_by_natural_order(interfaces: typing.Dict[str, dict]) -> typing.Dict[str
     return dict(
         sorted(
             interfaces.items(),
-            key=lambda l: [int(s) if s.isdigit() else s.lower() for s in re.split(r"(\d+)", l[0])]
+            key=lambda x: [int(s) if s.isdigit() else s.lower() for s in re.split(r"(\d+)", x[0])]
         )
     )
