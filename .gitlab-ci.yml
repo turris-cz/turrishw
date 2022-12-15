@@ -4,23 +4,14 @@ before_script:
 stages:
   - test
 
-.python3.7_image: &py37
-  image: registry.nic.cz/turris/turrishw/python3.7
-
 .python3.9_image: &py39
   image: registry.nic.cz/turris/turrishw/python3.9
 
 lint:
-  <<: *py37
+  <<: *py39
   stage: test
   script:
     - tox -e lint
-
-python3.7:
-  <<: *py37
-  stage: test
-  script:
-    - tox -e py37
 
 python3.9:
   <<: *py39

@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 * Refactor internal processing of interfaces.
 
+### Removed
+* CI: Remove Python 3.7 test from gitlab CI
+
 ## [0.9.0] - 2022-06-27
 ### Changed
 * Mox: Refactor the ethernet port mapping, so we can tell which ethernet port
