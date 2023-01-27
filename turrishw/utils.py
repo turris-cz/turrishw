@@ -1,4 +1,4 @@
-# Copyright (c) 2018-2022, CZ.NIC, z.s.p.o. (http://www.nic.cz/)
+# Copyright (c) 2018-2023, CZ.NIC, z.s.p.o. (http://www.nic.cz/)
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -29,6 +29,7 @@ from pathlib import Path
 
 # ENV variable is needed for blackbox testing with foris-controller
 TURRISHW_FILE_ROOT = os.getenv("TURRISHW_ROOT", "/")
+WIFI_PATH_REGEX = re.compile(r"^\.\./\.\./devices/platform/(.*)$")
 
 
 def inject_file_root(*paths) -> Path:
@@ -158,6 +159,7 @@ def iface_info(
     macaddr: str,
     vlan_id: typing.Optional[int] = None,
     module_id: int = 0,  # `module_id` is useful only for Mox, fallback to 0 for other HW
+    slot_path: typing.Optional[str] = None,
 ):
     state = get_iface_state(iface_name)
     iface_speed = get_iface_speed(iface_name) if state == "up" else 0
@@ -170,6 +172,9 @@ def iface_info(
     if vlan_id is not None:
         res["vlan_id"] = vlan_id
 
+    if slot_path is not None:
+        res["slot_path"] = slot_path
+
     return res
 
 
@@ -181,3 +186,8 @@ def sort_by_natural_order(interfaces: typing.Dict[str, dict]) -> typing.Dict[str
             key=lambda x: [int(s) if s.isdigit() else s.lower() for s in re.split(r"(\d+)", x[0])]
         )
     )
+
+
+def wifi_strip_prefix(s: str) -> str:
+    res = WIFI_PATH_REGEX.match(s)
+    return res.group(1)

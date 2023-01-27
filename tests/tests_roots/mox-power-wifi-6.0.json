@@ -1,0 +1,11 @@
+{
+    "eth0": {"bus": "eth", "link_speed": 1000, "macaddr": "de:ad:be:ef:99:99", "module_id": 0, "slot": "ETH0", "state": "up", "type": "eth"},
+    "mlan0": {
+        "bus": "sdio", "link_speed": 0, "macaddr": "80:c5:f2:4a:c2:b7", "module_id": 0, "slot": "0", "state": "down", "type": "wifi",
+        "slot_path": "soc/soc:internal-regs@d0000000/d00d0000.sdhci/mmc_host/mmc1/mmc1:0001/mmc1:0001:1/net/mlan0"
+    },
+    "wlan0": {
+        "bus": "pci", "link_speed": 0, "macaddr": "04:f0:21:1c:b7:58", "module_id": 1, "slot": "0", "state": "down", "type": "wifi",
+        "slot_path": "soc/d0070000.pcie/pci0000:00/0000:00:00.0/0000:01:00.0/net/wlan0"
+    }
+}

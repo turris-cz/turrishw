@@ -25,8 +25,8 @@ import turrishw
 def set_root(request, monkeypatch, tmpdir):
     root = request.param
     roots_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), "tests_roots")
-    result_json = os.path.join(roots_dir, root + '.json')
-    root_tar = os.path.join(roots_dir, root + '.tar.gz')
+    result_json = os.path.join(roots_dir, root + ".json")
+    root_tar = os.path.join(roots_dir, root + ".tar.gz")
     tdir = str(tmpdir)
     with tarfile.open(root_tar) as tar:
         tar.extractall(path=tdir)
@@ -42,6 +42,7 @@ def set_root(request, monkeypatch, tmpdir):
         "mox1",
         "mox2",
         "mox3",
+        "mox-power-wifi-6.0",
         "mox-ac-6.0-vlans",
         "mox-ad-6.0-vlans",
         "omnia",

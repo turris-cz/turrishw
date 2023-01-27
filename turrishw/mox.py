@@ -1,4 +1,4 @@
-# Copyright (c) 2018-2022, CZ.NIC, z.s.p.o. (http://www.nic.cz/)
+# Copyright (c) 2018-2023, CZ.NIC, z.s.p.o. (http://www.nic.cz/)
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -61,8 +61,30 @@ def _get_switch_id(iface_path: Path) -> int:
 
 
 def get_interfaces() -> typing.Dict[str, dict]:
-    def append_iface(name: str, if_type: str, bus: str, port_label: str, macaddr: str, module_seq: int):
-        ifaces[name] = utils.iface_info(name, if_type, bus, port_label, macaddr, module_id=module_seq)
+    def append_iface(
+        name: str,
+        if_type: str,
+        bus: str,
+        port_label: str,
+        macaddr: str,
+        module_seq: int,
+        slot_path: typing.Optional[str] = None,
+    ) -> None:
+        """
+        On Turris OS 6.0+ the default identification of wireless devices in uci config became the `option path`,
+        essentially the pci slot path.
+        Previously the `option macaddr` was used by default.
+
+        If `slot_path` is reported by turrishw, then foris-controller can better match the present network devices
+        to the uci configuration of wireless devices.
+        """
+        if if_type == "wifi" and slot_path:
+            # report pci slot path only for wifi devices
+            ifaces[name] = utils.iface_info(
+                name, if_type, bus, port_label, macaddr, module_id=module_seq, slot_path=utils.wifi_strip_prefix(slot_path)
+            )
+        else:
+            ifaces[name] = utils.iface_info(name, if_type, bus, port_label, macaddr, module_id=module_seq)
 
     def get_module_rank(name):
         seq = [i + 1 for i, s in enumerate(modules) if name in s]
@@ -81,6 +103,7 @@ def get_interfaces() -> typing.Dict[str, dict]:
     for iface_name in utils.get_ifaces():
         path = os.readlink(utils.inject_file_root("sys/class/net", iface_name))
         iface_path = utils.inject_file_root("sys/class/net", iface_name)
+        iface_type = utils.find_iface_type(iface_name)
         macaddr = utils.get_first_line(iface_path / "address").strip()
 
         if "d0032004.mdio-mii" in path:
@@ -106,7 +129,7 @@ def get_interfaces() -> typing.Dict[str, dict]:
                 append_iface(iface_name, "eth", "sfp", "SFP", macaddr, module_seq=sfp_seq)
         elif "d00d0000.sdhci" in path:
             # SDIO on the CPU board
-            append_iface(iface_name, "wifi", "sdio", "0", macaddr, module_seq=0)
+            append_iface(iface_name, "wifi", "sdio", "0", macaddr, module_seq=0, slot_path=path)
         elif "d0070000.pcie" in path:
             # PCIe on the MOXTET connector
             # can be PCI (B) or USB3.0 (F) module
@@ -116,21 +139,21 @@ def get_interfaces() -> typing.Dict[str, dict]:
                     usb_seq = get_module_rank("usb3.0")
                     port = m.group(1)
                     append_iface(
-                        iface_name, utils.find_iface_type(iface_name), "usb", port, macaddr, module_seq=usb_seq
+                        iface_name, iface_type, "usb", port, macaddr, module_seq=usb_seq, slot_path=path
                     )
                 else:
                     logger.warning("unknown port on USB3.0 module")
             else:  # PCI module
                 pci_seq = get_module_rank("pci")
-                append_iface(iface_name, utils.find_iface_type(iface_name), "pci", "0", macaddr, module_seq=pci_seq)
+                append_iface(iface_name, iface_type, "pci", "0", macaddr, module_seq=pci_seq, slot_path=path)
         elif "d0058000.usb" in path:
             # USB on the CPU module
-            append_iface(iface_name, utils.find_iface_type(iface_name), "usb", "0", macaddr, module_seq=0)
+            append_iface(iface_name, iface_type, "usb", "0", macaddr, module_seq=0, slot_path=path)
         elif "d005e000.usb" in path:
             # USB2.0 on the MOXTET connector
             # the only option now is USB device on PCI module
             pci_seq = get_module_rank("pci")
-            append_iface(iface_name, utils.find_iface_type(iface_name), "pci", "0", macaddr, module_seq=pci_seq)
+            append_iface(iface_name, iface_type, "pci", "0", macaddr, module_seq=pci_seq, slot_path=path)
         elif "virtual" in path:
             # virtual ifaces (loopback, bridges, ...) - we don't care about these
             #

@@ -7,5 +7,5 @@
     "lan4": {"bus": "eth", "link_speed": 0, "macaddr": "d8:58:d7:00:05:77", "module_id": 0, "slot": "LAN4", "state": "down", "type": "eth"},
     "lan5": {"bus": "eth", "link_speed": 0, "macaddr": "d8:58:d7:00:05:77", "module_id": 0, "slot": "LAN5", "state": "down", "type": "eth"},
     "lan5.500": {"bus": "eth", "link_speed": 0, "macaddr": "d8:58:d7:00:05:77", "module_id": 0, "slot": "LAN5", "state": "down", "type": "eth", "vlan_id": 500},
-    "wlan0": {"bus": "pci", "link_speed": 0, "macaddr": "60:02:b4:7d:86:32", "module_id": 0, "slot": "0", "state": "down", "type": "wifi"}
+    "wlan0": {"bus": "pci", "link_speed": 0, "macaddr": "60:02:b4:7d:86:32", "module_id": 0, "slot": "0", "state": "down", "type": "wifi", "slot_path": "ffe09000.pcie/pci0001:02/0001:02:00.0/0001:03:00.0/net/wlan0"}
 }
