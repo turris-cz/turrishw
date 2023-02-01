@@ -36,26 +36,11 @@ logger = logging.getLogger(__name__)
 
 
 def get_interfaces() -> typing.Dict[str, dict]:
-    def append_iface(
-        name: str,
-        if_type: str,
-        bus: str,
-        port_label: str,
-        macaddr: str,
-        slot_path: typing.Optional[str] = None,
-    ):
-        if if_type == "wifi" and slot_path:
-            ifaces[name] = utils.iface_info(
-                name, if_type, bus, port_label, macaddr, slot_path=utils.wifi_strip_prefix(slot_path)
-            )
-        else:
-            ifaces[name] = utils.iface_info(name, if_type, bus, port_label, macaddr)
-
     def detect_pcie_wifi(iface, path, regex):
         """Try to detect wifi interface based on regex"""
         m = re.search(regex, path)
         if m:
-            append_iface(iface, "wifi", "pci", "0", macaddr, slot_path=path)
+            utils.append_iface(ifaces, iface, "wifi", "pci", "0", macaddr, slot_path=path)
         else:
             logger.warning("unknown PCI slot module")
 
@@ -72,16 +57,17 @@ def get_interfaces() -> typing.Dict[str, dict]:
 
         if "mdio@ffe24520" in path:  # Switch exported ports
             port_label = utils.get_iface_label(iface_path)
-            append_iface(iface_name, "eth", "eth", port_label, macaddr)
+            utils.append_iface(ifaces, iface_name, "eth", "eth", port_label, macaddr)
         elif "ffe26000.ethernet" in path:  # WAN port
-            append_iface(iface_name, "eth", "eth", "WAN", macaddr)
+            utils.append_iface(ifaces, iface_name, "eth", "eth", "WAN", macaddr)
         elif "pci0001:02" in path:  # pcie wifi
             detect_pcie_wifi(iface_name, path, r"/0001:02:00\.0/")
         elif "pci0002:04" in path:  # pcie wifi
             detect_pcie_wifi(iface_name, path, r"/0002:04:00\.0/")
         elif "fsl-ehci.0" in path:
             # back two USB2.0 ports.
-            append_iface(
+            utils.append_iface(
+                ifaces,
                 iface_name,
                 iface_type,
                 "usb",
@@ -89,7 +75,8 @@ def get_interfaces() -> typing.Dict[str, dict]:
                 macaddr,
                 slot_path=path,
             )
-            append_iface(
+            utils.append_iface(
+                ifaces,
                 iface_name,
                 iface_type,
                 "usb",
@@ -98,7 +85,8 @@ def get_interfaces() -> typing.Dict[str, dict]:
                 slot_path=path,
             )
         elif "f1058000.usb" in path:
-            append_iface(
+            utils.append_iface(
+                ifaces,
                 iface_name,
                 iface_type,
                 "pci",

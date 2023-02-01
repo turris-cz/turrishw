@@ -33,21 +33,6 @@ logger = logging.getLogger(__name__)
 
 
 def get_interfaces() -> typing.Dict[str, dict]:
-    def append_iface(
-        name: str,
-        if_type: str,
-        bus: str,
-        port_label: str,
-        macaddr: str,
-        slot_path: typing.Optional[str] = None,
-    ):
-        if if_type == "wifi" and slot_path:
-            ifaces[name] = utils.iface_info(
-                name, if_type, bus, port_label, macaddr, slot_path=utils.wifi_strip_prefix(slot_path)
-            )
-        else:
-            ifaces[name] = utils.iface_info(name, if_type, bus, port_label, macaddr)
-
     ifaces: typing.Dict[str, dict] = {}
     second_pass_ifaces: typing.List[typing.Dict[str, str]] = []
     vlan_ifaces: typing.List[str] = utils.get_vlan_interfaces()
@@ -62,27 +47,27 @@ def get_interfaces() -> typing.Dict[str, dict]:
         if "f1072004.mdio" in path:
             # switch
             port_label = utils.get_iface_label(iface_path)
-            append_iface(iface_name, "eth", "eth", port_label, macaddr)
+            utils.append_iface(ifaces, iface_name, "eth", "eth", port_label, macaddr)
         elif "f1034000.ethernet" in path:
             # WAN port
-            append_iface(iface_name, "eth", "eth", "WAN", macaddr)
+            utils.append_iface(ifaces, iface_name, "eth", "eth", "WAN", macaddr)
         elif "pci0000:00" in path:
             # PCI
             m = re.search(r"/0000:00:0([0-3])\.0/", path)
             if m:
                 slot = m.group(1)
-                append_iface(iface_name, "wifi", "pci", slot, macaddr, slot_path=path)
+                utils.append_iface(ifaces, iface_name, "wifi", "pci", slot, macaddr, slot_path=path)
             else:
                 logger.warning("unknown PCI slot module")
         elif "f10f0000.usb3" in path:
             # front USB3.0
-            append_iface(iface_name, iface_type, "usb", "front", macaddr, slot_path=path)
+            utils.append_iface(ifaces, iface_name, iface_type, "usb", "front", macaddr, slot_path=path)
         elif "f10f8000.usb3" in path:
             # rear USB3.0
-            append_iface(iface_name, iface_type, "usb", "rear", macaddr, slot_path=path)
+            utils.append_iface(ifaces, iface_name, iface_type, "usb", "rear", macaddr, slot_path=path)
         elif "f1058000.usb" in path:
             # USB2.0 on the PCI connector 3
-            append_iface(iface_name, iface_type, "pci", "3", macaddr)
+            utils.append_iface(ifaces, iface_name, iface_type, "pci", "3", macaddr, slot_path=path)
         elif "f1070000.ethernet" in path or "f1030000.ethernet" in path:
             # ethernet interfaces connected to switch - ignore them
             pass

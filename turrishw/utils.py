@@ -141,7 +141,8 @@ def process_vlan_interfaces(
         if base_iface in first_pass_ifaces:
             parent = first_pass_ifaces[base_iface]
             first_pass_ifaces[iface_name] = iface_info(
-                iface_name, parent["type"], parent["bus"], parent["slot"], macaddr, vlan_id_no, parent["module_id"]
+                iface_name, parent["type"], parent["bus"], parent["slot"], macaddr,
+                vlan_id=vlan_id_no, module_id=parent["module_id"]
             )
 
 
@@ -151,6 +152,31 @@ def get_TOS_major_version():
     return int(parts[0])
 
 
+def append_iface(
+    ifaces: typing.Dict[str, dict],
+    name: str,
+    if_type: str,
+    bus: str,
+    port_label: str,
+    macaddr: str,
+    slot_path: typing.Optional[str] = None,
+    module_seq: int = 0,
+) -> None:
+    """
+    `slot_path` is optional argument, which is currently relevant only for wireless devices.
+    If `slot_path` is reported by turrishw, then foris-controller can better match the present network devices
+    to the uci configuration of wireless devices on Turris OS 6.0+.
+
+    `module_id` is relevant only for Mox, fallback to 0 for other Turris models
+    """
+    if if_type == "wifi" and slot_path:
+        ifaces[name] = iface_info(
+            name, if_type, bus, port_label, macaddr, slot_path=wifi_strip_prefix(slot_path), module_id=module_seq
+        )
+    else:
+        ifaces[name] = iface_info(name, if_type, bus, port_label, macaddr, module_id=module_seq)
+
+
 def iface_info(
     iface_name: str,
     if_type: str,
@@ -158,8 +184,8 @@ def iface_info(
     port_label: str,
     macaddr: str,
     vlan_id: typing.Optional[int] = None,
-    module_id: int = 0,  # `module_id` is useful only for Mox, fallback to 0 for other HW
     slot_path: typing.Optional[str] = None,
+    module_id: int = 0,  # `module_id` is useful only for Mox, fallback to 0 for other HW
 ):
     state = get_iface_state(iface_name)
     iface_speed = get_iface_speed(iface_name) if state == "up" else 0

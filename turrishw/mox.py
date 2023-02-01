@@ -61,31 +61,6 @@ def _get_switch_id(iface_path: Path) -> int:
 
 
 def get_interfaces() -> typing.Dict[str, dict]:
-    def append_iface(
-        name: str,
-        if_type: str,
-        bus: str,
-        port_label: str,
-        macaddr: str,
-        module_seq: int,
-        slot_path: typing.Optional[str] = None,
-    ) -> None:
-        """
-        On Turris OS 6.0+ the default identification of wireless devices in uci config became the `option path`,
-        essentially the pci slot path.
-        Previously the `option macaddr` was used by default.
-
-        If `slot_path` is reported by turrishw, then foris-controller can better match the present network devices
-        to the uci configuration of wireless devices.
-        """
-        if if_type == "wifi" and slot_path:
-            # report pci slot path only for wifi devices
-            ifaces[name] = utils.iface_info(
-                name, if_type, bus, port_label, macaddr, module_id=module_seq, slot_path=utils.wifi_strip_prefix(slot_path)
-            )
-        else:
-            ifaces[name] = utils.iface_info(name, if_type, bus, port_label, macaddr, module_id=module_seq)
-
     def get_module_rank(name):
         seq = [i + 1 for i, s in enumerate(modules) if name in s]
         if seq:
@@ -113,12 +88,12 @@ def get_interfaces() -> typing.Dict[str, dict]:
             switch_no = switch_idxs[switch_id]  # Mox module number based on the actual module topology
             if port_label == "SFP":
                 sfp_seq = get_module_rank("sfp")
-                append_iface(iface_name, "eth", "sfp", port_label, macaddr, module_seq=sfp_seq)
+                utils.append_iface(ifaces, iface_name, "eth", "sfp", port_label, macaddr, module_seq=sfp_seq)
             else:  # everything else should be ethernet
-                append_iface(iface_name, "eth", "eth", port_label, macaddr, module_seq=switch_no)
+                utils.append_iface(ifaces, iface_name, "eth", "eth", port_label, macaddr, module_seq=switch_no)
         elif "d0030000.ethernet" in path:
             # ethernet port on the CPU board
-            append_iface(iface_name, "eth", "eth", "ETH0", macaddr, module_seq=0)
+            utils.append_iface(ifaces, iface_name, "eth", "eth", "ETH0", macaddr, module_seq=0)
         elif "d0040000.ethernet" in path:
             # ethernet on the MOXTET connector
             # when some switches are connected, it shouldn't be touched (it's
@@ -126,10 +101,10 @@ def get_interfaces() -> typing.Dict[str, dict]:
             # actually the SFP interface
             sfp_seq = get_module_rank("sfp")
             if not switch_idxs and sfp_seq:
-                append_iface(iface_name, "eth", "sfp", "SFP", macaddr, module_seq=sfp_seq)
+                utils.append_iface(ifaces, iface_name, "eth", "sfp", "SFP", macaddr, module_seq=sfp_seq)
         elif "d00d0000.sdhci" in path:
             # SDIO on the CPU board
-            append_iface(iface_name, "wifi", "sdio", "0", macaddr, module_seq=0, slot_path=path)
+            utils.append_iface(ifaces, iface_name, "wifi", "sdio", "0", macaddr, module_seq=0, slot_path=path)
         elif "d0070000.pcie" in path:
             # PCIe on the MOXTET connector
             # can be PCI (B) or USB3.0 (F) module
@@ -138,22 +113,24 @@ def get_interfaces() -> typing.Dict[str, dict]:
                 if m:
                     usb_seq = get_module_rank("usb3.0")
                     port = m.group(1)
-                    append_iface(
-                        iface_name, iface_type, "usb", port, macaddr, module_seq=usb_seq, slot_path=path
+                    utils.append_iface(
+                        ifaces, iface_name, iface_type, "usb", port, macaddr, module_seq=usb_seq, slot_path=path
                     )
                 else:
                     logger.warning("unknown port on USB3.0 module")
             else:  # PCI module
                 pci_seq = get_module_rank("pci")
-                append_iface(iface_name, iface_type, "pci", "0", macaddr, module_seq=pci_seq, slot_path=path)
+                utils.append_iface(
+                    ifaces, iface_name, iface_type, "pci", "0", macaddr, module_seq=pci_seq, slot_path=path
+                )
         elif "d0058000.usb" in path:
             # USB on the CPU module
-            append_iface(iface_name, iface_type, "usb", "0", macaddr, module_seq=0, slot_path=path)
+            utils.append_iface(ifaces, iface_name, iface_type, "usb", "0", macaddr, module_seq=0, slot_path=path)
         elif "d005e000.usb" in path:
             # USB2.0 on the MOXTET connector
             # the only option now is USB device on PCI module
             pci_seq = get_module_rank("pci")
-            append_iface(iface_name, iface_type, "pci", "0", macaddr, module_seq=pci_seq, slot_path=path)
+            utils.append_iface(ifaces, iface_name, iface_type, "pci", "0", macaddr, module_seq=pci_seq, slot_path=path)
         elif "virtual" in path:
             # virtual ifaces (loopback, bridges, ...) - we don't care about these
             #
