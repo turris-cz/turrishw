@@ -1,4 +1,4 @@
-# Copyright 2018-2022, CZ.NIC z.s.p.o. (http://www.nic.cz/)
+# Copyright 2018-2023, CZ.NIC z.s.p.o. (http://www.nic.cz/)
 #
 # TurrisHW is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -61,3 +61,22 @@ def test_get_interfaces(set_root):
 
         # test order of interfaces
         assert [*json_data.keys()] == [*thw_ifaces.keys()]
+
+
+@pytest.mark.parametrize(
+    "set_root,filter_types",
+    [
+        ("omnia", ["eth"]),
+        ("omnia", ["wifi"]),
+        ("mox1", ["wifi", "wwan"]),
+        ("mox1", []),
+    ],
+    indirect=["set_root"],
+)
+def test_get_interfaces_filter(set_root, filter_types):
+    with open(set_root) as file:
+        thw_ifaces = turrishw.get_ifaces(filter_types=filter_types)
+        mock_json_data = json.load(file)
+        filtered_json_data = {name: data for name, data in mock_json_data.items() if data["type"] in filter_types}
+
+        assert filtered_json_data == thw_ifaces

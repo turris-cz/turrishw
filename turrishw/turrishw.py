@@ -1,4 +1,5 @@
 import logging
+import typing
 
 from . import mox, omnia, turris1x, utils
 
@@ -22,7 +23,7 @@ def get_model():
     return MODEL_MAP.get(model, "")
 
 
-def get_ifaces():
+def get_ifaces(filter_types: typing.Optional[list[str]] = None):
     MODEL_MAP = {
         "MOX": mox,
         "OMNIA": omnia,
@@ -36,9 +37,14 @@ def get_ifaces():
         logger.warning("Unsupported model: %s", hw_model)
         return {}
 
+    ifaces = model.get_interfaces()
+    if filter_types is not None:
+        ifaces = {if_name: if_data for if_name, if_data in ifaces.items() if if_data["type"] in filter_types}
+
     # Reading interfaces from /sys might return them in different order based on tool used.
     # See difference between order of items for `os.listdir()` vs `ls` in shell.
     #
     # It will be more useful for consumer of `turrishw` to get interfaces sorted in resulting dictionary
     # to avoid dealing with the possibly random order of interfaces.
-    return utils.sort_by_natural_order(model.get_interfaces())
+
+    return utils.sort_by_natural_order(ifaces)
