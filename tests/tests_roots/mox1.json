@@ -22,5 +22,8 @@
     "slot_path": "soc/soc:internal-regs@d0000000/d00d0000.sdhci/mmc_host/mmc1/mmc1:0001/mmc1:0001:1/net/mlan0"
   },
   "sfp": {"bus": "sfp", "link_speed": 0, "module_id": 4, "slot": "SFP", "state": "down", "type": "eth", "macaddr": "f2:36:22:4e:38:d3"},
-  "wwan0": {"bus": "pci", "link_speed": 0, "module_id": 1, "slot": "0", "state": "down", "type": "wwan", "macaddr": "1a:71:57:46:c4:d0"}
+  "wwan0": {
+    "bus": "pci", "link_speed": 0, "module_id": 1, "slot": "0", "state": "down", "type": "wwan", "macaddr": "1a:71:57:46:c4:d0",
+    "qmi_device": "/dev/cdc-wdm0"
+  }
 }

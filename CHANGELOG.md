@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 * Allow fetching only certain types of interfaces (ethernet, wifi, wwan) in
   func `get_ifaces`.
+* utils: Match the QMI control device to its interface and report it in
+  resulting json data.
 
 ### Changed
 * Omnia: Improve labels of USB ports (front/rear).

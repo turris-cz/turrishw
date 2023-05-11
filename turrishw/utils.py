@@ -22,6 +22,7 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 # EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+import logging
 import os
 import re
 import typing
@@ -30,6 +31,8 @@ from pathlib import Path
 # ENV variable is needed for blackbox testing with foris-controller
 TURRISHW_FILE_ROOT = os.getenv("TURRISHW_ROOT", "/")
 WIFI_PATH_REGEX = re.compile(r"^\.\./\.\./devices/platform/(.*)$")
+
+logger = logging.getLogger(__name__)
 
 
 def inject_file_root(*paths) -> Path:
@@ -67,6 +70,45 @@ def get_iface_label(iface_path: Path) -> str:
     Search /sys subsystem for `<iface_path>/of_node/label`.
     """
     return get_first_line(iface_path / "of_node/label").rstrip("\x00").upper()
+
+
+def get_qmi_modem_device(interface_path: Path) -> typing.Optional[str]:
+    """Get the control device name (/dev/cdc-wdmX) for given qmi interface.
+
+    interface_path could be for example:
+    /sys/devices/platform/soc/soc:internal-regs@d0000000/d005e000.usb/usb1/1-1/1-1:1.4/net/wwan0
+    => wwan0
+
+    control device path could be for example:
+    /sys/devices/platform/soc/soc:internal-regs@d0000000/d005e000.usb/usb1/1-1/1-1:1.4/usbmisc/cdc-wdm0
+    => cdc-wdm0
+
+    Basically try to find pair: wwan0 -> /dev/cdc-wdm0
+
+    Please note that it is not guaranteed that interface number will match the
+    control device number (wwanX <-> cdc-wdmX) every time.
+    In case of multiple QMI devices, it can be paired in arbitrary order.
+
+    For example:
+    wwan0 -> cdc-wdm1
+    wwan1 -> cdc-wdm0
+
+    In case none device is found, return None.
+    """
+    # pathlib.Path object is necessary here, so we can resolve symlink to the real path on filesystem
+    parent_dev_path = interface_path.resolve().parent.parent  # strip the 'net/wwanX' suffix
+
+    # Do lookup among usb devices and try to find the device that share the same parent with interface path.
+    # Basically the one that belongs to the same '/sys/class/.../usbX/<some_numbers>' parent.
+    usb_sys_devices_path = inject_file_root("sys/class/usbmisc")
+    for usbdev in usb_sys_devices_path.iterdir():
+        # ignore anything other that symlinks to prevent accidental reading of garbage
+        if usbdev.is_symlink():
+            usbdev_abspath = usbdev.resolve()
+            if parent_dev_path in usbdev_abspath.parents:
+                return f"/dev/{usbdev_abspath.name}"
+
+    return None
 
 
 def find_iface_type(iface):
@@ -160,6 +202,7 @@ def append_iface(
     port_label: str,
     macaddr: str,
     slot_path: typing.Optional[str] = None,
+    parent_device_abs_path: typing.Optional[Path] = None,
     module_seq: int = 0,
 ) -> None:
     """
@@ -167,11 +210,23 @@ def append_iface(
     If `slot_path` is reported by turrishw, then foris-controller can better match the present network devices
     to the uci configuration of wireless devices on Turris OS 6.0+.
 
+    `parent_device_abs_path` is optional argument, useful only for additional processing of QMI devices data
+    and usb devices in general.
+
     `module_id` is relevant only for Mox, fallback to 0 for other Turris models
     """
     if if_type == "wifi" and slot_path:
         ifaces[name] = iface_info(
             name, if_type, bus, port_label, macaddr, slot_path=wifi_strip_prefix(slot_path), module_id=module_seq
+        )
+    elif if_type == "wwan" and parent_device_abs_path:
+        qmi_control_dev_path = get_qmi_modem_device(parent_device_abs_path)
+        if not qmi_control_dev_path:
+            logger.warning(f"Failed to find qmi control device for interface '{name}', ignoring the interface.")
+            return
+
+        ifaces[name] = iface_info(
+            name, if_type, bus, port_label, macaddr, qmi_device=qmi_control_dev_path, module_id=module_seq
         )
     else:
         ifaces[name] = iface_info(name, if_type, bus, port_label, macaddr, module_id=module_seq)
@@ -185,6 +240,7 @@ def iface_info(
     macaddr: str,
     vlan_id: typing.Optional[int] = None,
     slot_path: typing.Optional[str] = None,
+    qmi_device: typing.Optional[str] = None,
     module_id: int = 0,  # `module_id` is useful only for Mox, fallback to 0 for other HW
 ):
     state = get_iface_state(iface_name)
@@ -200,6 +256,9 @@ def iface_info(
 
     if slot_path is not None:
         res["slot_path"] = slot_path
+
+    if qmi_device is not None:
+        res["qmi_device"] = qmi_device
 
     return res
 
