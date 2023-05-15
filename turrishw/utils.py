@@ -30,7 +30,7 @@ from pathlib import Path
 
 # ENV variable is needed for blackbox testing with foris-controller
 TURRISHW_FILE_ROOT = os.getenv("TURRISHW_ROOT", "/")
-WIFI_PATH_REGEX = re.compile(r"^\.\./\.\./devices/platform/(.*)$")
+WIFI_PATH_REGEX = re.compile(r"sys/devices/platform/(.*)$")
 
 logger = logging.getLogger(__name__)
 
@@ -274,5 +274,11 @@ def sort_by_natural_order(interfaces: typing.Dict[str, dict]) -> typing.Dict[str
 
 
 def wifi_strip_prefix(s: str) -> str:
-    res = WIFI_PATH_REGEX.match(s)
+    # Use re.search instead of re.match, because we can get various path prefixes ('/', '/tmp/pytest-of-user', ...),
+    # based on environment (test vs on router).
+    # Thus we are not always searching from the beginning of the string.
+    res = WIFI_PATH_REGEX.search(s)
+    if not res:
+        return s  # when in doubt, return the original string and let the consumer handle it
+
     return res.group(1)

@@ -23,9 +23,9 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 # EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 import logging
-import os
 import re
 import typing
+from pathlib import Path
 
 from . import utils
 
@@ -39,39 +39,49 @@ def get_interfaces() -> typing.Dict[str, dict]:
 
     # First pass - process the detected physical interfaces
     for iface_name in utils.get_ifaces():
-        path = os.readlink(utils.inject_file_root("sys/class/net", iface_name))
-        iface_path = utils.inject_file_root("sys/class/net", iface_name)
+        iface_path: Path = utils.inject_file_root("sys/class/net", iface_name)
+        iface_abspath: Path = iface_path.resolve()
+        iface_path_str = str(iface_abspath)
         iface_type = utils.find_iface_type(iface_name)
         macaddr = utils.get_first_line(iface_path / "address").strip()
 
-        if "f1072004.mdio" in path:
+        if "f1072004.mdio" in iface_path_str:
             # switch
             port_label = utils.get_iface_label(iface_path)
             utils.append_iface(ifaces, iface_name, "eth", "eth", port_label, macaddr)
-        elif "f1034000.ethernet" in path:
+        elif "f1034000.ethernet" in iface_path_str:
             # WAN port
             utils.append_iface(ifaces, iface_name, "eth", "eth", "WAN", macaddr)
-        elif "pci0000:00" in path:
+        elif "pci0000:00" in iface_path_str:
             # PCI
-            m = re.search(r"/0000:00:0([0-3])\.0/", path)
+            m = re.search(r"/0000:00:0([0-3])\.0/", iface_path_str)
             if m:
                 slot = m.group(1)
-                utils.append_iface(ifaces, iface_name, "wifi", "pci", slot, macaddr, slot_path=path)
+                utils.append_iface(ifaces, iface_name, "wifi", "pci", slot, macaddr, slot_path=iface_path_str)
             else:
                 logger.warning("unknown PCI slot module")
-        elif "f10f0000.usb3" in path:
+        elif "f10f0000.usb3" in iface_path_str:
             # front USB3.0
-            utils.append_iface(ifaces, iface_name, iface_type, "usb", "USB Front", macaddr, slot_path=path)
-        elif "f10f8000.usb3" in path:
+            utils.append_iface(
+                ifaces, iface_name, iface_type, "usb", "USB Front", macaddr, slot_path=iface_path_str,
+                parent_device_abs_path=iface_abspath
+            )
+        elif "f10f8000.usb3" in iface_path_str:
             # rear USB3.0
-            utils.append_iface(ifaces, iface_name, iface_type, "usb", "USB Rear", macaddr, slot_path=path)
-        elif "f1058000.usb" in path:
+            utils.append_iface(
+                ifaces, iface_name, iface_type, "usb", "USB Rear", macaddr, slot_path=iface_path_str,
+                parent_device_abs_path=iface_abspath
+            )
+        elif "f1058000.usb" in iface_path_str:
             # USB2.0 on the PCI connector 3
-            utils.append_iface(ifaces, iface_name, iface_type, "pci", "3", macaddr, slot_path=path)
-        elif "f1070000.ethernet" in path or "f1030000.ethernet" in path:
+            utils.append_iface(
+                ifaces, iface_name, iface_type, "pci", "3", macaddr, slot_path=iface_path_str,
+                parent_device_abs_path=iface_abspath
+            )
+        elif "f1070000.ethernet" in iface_path_str or "f1030000.ethernet" in iface_path_str:
             # ethernet interfaces connected to switch - ignore them
             pass
-        elif "virtual" in path:
+        elif "virtual" in iface_path_str:
             # virtual ifaces (loopback, bridges, ...) - we don't care about these
             #
             # `utils.get_ifaces` can return interfaces in random order, so interfaces with VLAN assigned

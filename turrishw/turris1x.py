@@ -26,9 +26,9 @@
 """Implementation of Turris 1.x router HW"""
 
 import logging
-import os
 import re
 import typing
+from pathlib import Path
 
 from . import utils
 
@@ -50,21 +50,22 @@ def get_interfaces() -> typing.Dict[str, dict]:
 
     # First pass - process the detected physical interfaces
     for iface_name in utils.get_ifaces():
-        path = os.readlink(utils.inject_file_root("sys/class/net", iface_name))
-        iface_path = utils.inject_file_root("sys/class/net", iface_name)
+        iface_path: Path = utils.inject_file_root("sys/class/net", iface_name)
+        iface_abspath: Path = iface_path.resolve()
+        iface_path_str = str(iface_abspath)
         iface_type = utils.find_iface_type(iface_name)
         macaddr = utils.get_first_line(iface_path / "address").strip()
 
-        if "mdio@ffe24520" in path:  # Switch exported ports
+        if "mdio@ffe24520" in iface_path_str:  # Switch exported ports
             port_label = utils.get_iface_label(iface_path)
             utils.append_iface(ifaces, iface_name, "eth", "eth", port_label, macaddr)
-        elif "ffe26000.ethernet" in path:  # WAN port
+        elif "ffe26000.ethernet" in iface_path_str:  # WAN port
             utils.append_iface(ifaces, iface_name, "eth", "eth", "WAN", macaddr)
-        elif "pci0001:02" in path:  # pcie wifi
-            detect_pcie_wifi(iface_name, path, r"/0001:02:00\.0/")
-        elif "pci0002:04" in path:  # pcie wifi
-            detect_pcie_wifi(iface_name, path, r"/0002:04:00\.0/")
-        elif "fsl-ehci.0" in path:
+        elif "pci0001:02" in iface_path_str:  # pcie wifi
+            detect_pcie_wifi(iface_name, iface_path_str, r"/0001:02:00\.0/")
+        elif "pci0002:04" in iface_path_str:  # pcie wifi
+            detect_pcie_wifi(iface_name, iface_path_str, r"/0002:04:00\.0/")
+        elif "fsl-ehci.0" in iface_path_str:
             # back two USB2.0 ports.
             utils.append_iface(
                 ifaces,
@@ -73,7 +74,8 @@ def get_interfaces() -> typing.Dict[str, dict]:
                 "usb",
                 "front",
                 macaddr,
-                slot_path=path,
+                slot_path=iface_path_str,
+                parent_device_abs_path=iface_abspath,
             )
             utils.append_iface(
                 ifaces,
@@ -82,9 +84,10 @@ def get_interfaces() -> typing.Dict[str, dict]:
                 "usb",
                 "rear",
                 macaddr,
-                slot_path=path,
+                slot_path=iface_path_str,
+                parent_device_abs_path=iface_abspath,
             )
-        elif "f1058000.usb" in path:
+        elif "f1058000.usb" in iface_path_str:
             utils.append_iface(
                 ifaces,
                 iface_name,
@@ -92,12 +95,13 @@ def get_interfaces() -> typing.Dict[str, dict]:
                 "pci",
                 "3",
                 macaddr,
-                slot_path=path,
+                slot_path=iface_path_str,
+                parent_device_abs_path=iface_abspath,
             )
-        elif "ffe24000.ethernet" in path or "ffe25000.ethernet" in path:
+        elif "ffe24000.ethernet" in iface_path_str or "ffe25000.ethernet" in iface_path_str:
             # ethernet interfaces connected to switch - ignore them
             pass
-        elif "virtual" in path:
+        elif "virtual" in iface_path_str:
             # virtual ifaces (loopback, bridges, ...) - we don't care about these
             if iface_name in vlan_ifaces:
                 second_pass_ifaces.append({"name": iface_name, "macaddr": macaddr})
