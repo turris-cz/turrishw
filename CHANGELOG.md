@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   func `get_ifaces`.
 * utils: Match the QMI control device to its interface and report it in
   resulting json data.
+* tests: Add mock data for Mox ABC with two QMI modems.
 
 ### Changed
 * Omnia: Improve labels of USB ports (front/rear).

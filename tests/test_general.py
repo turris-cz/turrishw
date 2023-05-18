@@ -45,6 +45,7 @@ def set_root(request, monkeypatch, tmpdir):
         "mox-power-wifi-6.0",
         "mox-ac-6.0-vlans",
         "mox-ad-6.0-vlans",
+        "mox-abc-wwan-7.0",
         "omnia",
         "omnia-lan2-flapping",
         "omnia-6.0-vlans",
