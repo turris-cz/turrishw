@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 * Omnia: Improve labels of USB ports (front/rear).
 * Refactor the remaining path handling code to use pathlib.
+* Turris 1.x: Update USB ports detection on Turris 1.x routers.
 
 ## [0.11.0] - 2023-02-22
 ### Added

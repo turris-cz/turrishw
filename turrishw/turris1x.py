@@ -66,38 +66,54 @@ def get_interfaces() -> typing.Dict[str, dict]:
         elif "pci0002:04" in iface_path_str:  # pcie wifi
             detect_pcie_wifi(iface_name, iface_path_str, r"/0002:04:00\.0/")
         elif "fsl-ehci.0" in iface_path_str:
-            # back two USB2.0 ports.
-            utils.append_iface(
-                ifaces,
-                iface_name,
-                iface_type,
-                "usb",
-                "front",
-                macaddr,
-                slot_path=iface_path_str,
-                parent_device_abs_path=iface_abspath,
-            )
-            utils.append_iface(
-                ifaces,
-                iface_name,
-                iface_type,
-                "usb",
-                "rear",
-                macaddr,
-                slot_path=iface_path_str,
-                parent_device_abs_path=iface_abspath,
-            )
-        elif "f1058000.usb" in iface_path_str:
-            utils.append_iface(
-                ifaces,
-                iface_name,
-                iface_type,
-                "pci",
-                "3",
-                macaddr,
-                slot_path=iface_path_str,
-                parent_device_abs_path=iface_abspath,
-            )
+            # rear USB2.0 ports.
+            if "1-1.1" in iface_path_str:
+                utils.append_iface(
+                    ifaces,
+                    iface_name,
+                    iface_type,
+                    "usb",
+                    "USB 1",
+                    macaddr,
+                    slot_path=iface_path_str,
+                    parent_device_abs_path=iface_abspath,
+                )
+            elif "1-1.2" in iface_path_str:
+                utils.append_iface(
+                    ifaces,
+                    iface_name,
+                    iface_type,
+                    "usb",
+                    "USB 2",
+                    macaddr,
+                    slot_path=iface_path_str,
+                    parent_device_abs_path=iface_abspath,
+                )
+        # Turris 1.1 USB ports
+        elif "pci0002:00" in iface_path_str:
+            if "2-2" in iface_path_str:
+                utils.append_iface(
+                    ifaces,
+                    iface_name,
+                    iface_type,
+                    "pci",
+                    "2",
+                    macaddr,
+                    slot_path=iface_path_str,
+                    parent_device_abs_path=iface_abspath,
+                )
+            elif "3-1" in iface_path_str:
+                # front USB 3.0 port
+                utils.append_iface(
+                    ifaces,
+                    iface_name,
+                    iface_type,
+                    "usb",
+                    "USB Front",
+                    macaddr,
+                    slot_path=iface_path_str,
+                    parent_device_abs_path=iface_abspath,
+                )
         elif "ffe24000.ethernet" in iface_path_str or "ffe25000.ethernet" in iface_path_str:
             # ethernet interfaces connected to switch - ignore them
             pass
