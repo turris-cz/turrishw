@@ -50,7 +50,8 @@ def set_root(request, monkeypatch, tmpdir):
         "omnia-lan2-flapping",
         "omnia-6.0-vlans",
         "turris",
-        "turris-6.0-vlans"
+        "turris-6.0-vlans",
+        "turris-1.1-wwan-7.0",
     ],
     indirect=True
 )
