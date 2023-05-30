@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.12.0] - 2023-05-30
 ### Added
 * Allow fetching only certain types of interfaces (ethernet, wifi, wwan) in
   func `get_ifaces`.
@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 * Omnia: Improve labels of USB ports (front/rear).
 * Refactor the remaining path handling code to use pathlib.
-* Turris 1.x: Update USB ports detection on Turris 1.x routers.
+* Turris 1.x: Update USB ports detection on Turris 1.x routers on kernel 5.15.x.
 
 ## [0.11.0] - 2023-02-22
 ### Added
