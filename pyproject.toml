@@ -1,0 +1,27 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "turrishw"
+version = "0.12.0"
+dynamic = []
+description = "Turris hardware detection/query tool."
+readme = "README.md"
+license = "MIT"
+authors = [
+    { name = "CZ.NIC, z. s. p. o.", email = "packaging@turris.cz" },
+]
+
+[project.optional-dependencies]
+tests = [
+    "pytest",
+]
+
+[project.urls]
+Homepage = "https://gitlab.nic.cz/turris/turrishw"
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/turrishw",
+]
