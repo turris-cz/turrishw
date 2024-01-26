@@ -1,15 +1,15 @@
 {
-  "eth0": {"bus": "eth", "link_speed": 1000, "module_id": 0, "slot": "ETH0", "state": "up", "type": "eth", "macaddr": "de:ad:be:ef:99:99"},
-  "lan1": {"bus": "eth", "link_speed": 100, "module_id": 2, "slot": "LAN1", "state": "up", "type": "eth", "macaddr": "f2:36:22:4e:38:d3"},
-  "lan2": {"bus": "eth", "link_speed": 0, "module_id": 2, "slot": "LAN2", "state": "down", "type": "eth", "macaddr": "f2:36:22:4e:38:d3"},
-  "lan3": {"bus": "eth", "link_speed": 0, "module_id": 2, "slot": "LAN3", "state": "down", "type": "eth", "macaddr": "f2:36:22:4e:38:d3"},
-  "lan4": {"bus": "eth", "link_speed": 0, "module_id": 2, "slot": "LAN4", "state": "down", "type": "eth", "macaddr": "f2:36:22:4e:38:d3"},
-  "wwan0": {
-    "bus": "pci", "link_speed": 0, "module_id": 1, "slot": "0", "state": "down", "type": "wwan", "macaddr": "1a:71:57:46:c4:d0",
-    "qmi_device": "/dev/cdc-wdm0"
-  },
-  "wwan1": {
-    "bus": "usb", "link_speed": 0, "module_id": 0, "slot": "0", "state": "down", "type": "wwan", "macaddr": "1a:71:57:46:c4:d0",
-    "qmi_device": "/dev/cdc-wdm1"
-  }
+    "eth0": {"type": "eth", "bus": "eth", "state": "up", "slot": "ETH0", "module_id": 0, "macaddr": "de:ad:be:ef:99:99", "link_speed": 1000},
+    "lan1": {"type": "eth", "bus": "eth", "state": "up", "slot": "LAN1", "module_id": 2, "macaddr": "f2:36:22:4e:38:d3", "link_speed": 100},
+    "lan2": {"type": "eth", "bus": "eth", "state": "down", "slot": "LAN2", "module_id": 2, "macaddr": "f2:36:22:4e:38:d3", "link_speed": 0},
+    "lan3": {"type": "eth", "bus": "eth", "state": "down", "slot": "LAN3", "module_id": 2, "macaddr": "f2:36:22:4e:38:d3", "link_speed": 0},
+    "lan4": {"type": "eth", "bus": "eth", "state": "down", "slot": "LAN4", "module_id": 2, "macaddr": "f2:36:22:4e:38:d3", "link_speed": 0},
+    "wwan0": {
+        "type": "wwan", "bus": "pci", "state": "down", "slot": "0", "module_id": 1, "macaddr": "1a:71:57:46:c4:d0", "link_speed": 0,
+        "slot_path": "/sys/devices/platform/soc/soc:internal-regs@d0000000/d005e000.usb/usb1/1-1", "qmi_device": "/dev/cdc-wdm0"
+    },
+    "wwan1": {
+        "type": "wwan", "bus": "usb", "state": "down", "slot": "0", "module_id": 0, "macaddr": "1a:71:57:46:c4:d0", "link_speed": 0,
+        "slot_path": "/sys/devices/platform/soc/soc:internal-regs@d0000000/d0058000.usb/usb3/3-1", "qmi_device": "/dev/cdc-wdm1"
+    }
 }

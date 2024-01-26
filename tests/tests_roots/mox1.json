@@ -1,29 +1,28 @@
 {
-  "eth0": {"bus": "eth", "link_speed": 1000, "module_id": 0, "slot": "ETH0", "state": "up", "type": "eth", "macaddr": "de:ad:be:ef:99:99"},
-  "eth2": {"bus": "usb", "link_speed": 0, "module_id": 0, "slot": "0", "state": "down", "type": "eth", "macaddr": "00:50:b6:11:f3:93"},
-  "lan1": {"bus": "eth", "link_speed": 0, "module_id": 2, "slot": "LAN1", "state": "down", "type": "eth", "macaddr": "f2:36:22:4e:38:d3"},
-  "lan2": {"bus": "eth", "link_speed": 0, "module_id": 2, "slot": "LAN2", "state": "down", "type": "eth", "macaddr": "f2:36:22:4e:38:d3"},
-  "lan3": {"bus": "eth", "link_speed": 0, "module_id": 2, "slot": "LAN3", "state": "down", "type": "eth", "macaddr": "f2:36:22:4e:38:d3"},
-  "lan4": {"bus": "eth", "link_speed": 0, "module_id": 2, "slot": "LAN4", "state": "down", "type": "eth", "macaddr": "f2:36:22:4e:38:d3"},
-  "lan5": {"bus": "eth", "link_speed": 0, "module_id": 2, "slot": "LAN5", "state": "down", "type": "eth", "macaddr": "f2:36:22:4e:38:d3"},
-  "lan6": {"bus": "eth", "link_speed": 0, "module_id": 2, "slot": "LAN6", "state": "down", "type": "eth", "macaddr": "f2:36:22:4e:38:d3"},
-  "lan7": {"bus": "eth", "link_speed": 0, "module_id": 2, "slot": "LAN7", "state": "down", "type": "eth", "macaddr": "f2:36:22:4e:38:d3"},
-  "lan8": {"bus": "eth", "link_speed": 0, "module_id": 2, "slot": "LAN8", "state": "down", "type": "eth", "macaddr": "f2:36:22:4e:38:d3"},
-  "lan9": {"bus": "eth", "link_speed": 0, "module_id": 3, "slot": "LAN9", "state": "down", "type": "eth", "macaddr": "f2:36:22:4e:38:d3"},
-  "lan10": {"bus": "eth", "link_speed": 0, "module_id": 3, "slot": "LAN10", "state": "down", "type": "eth", "macaddr": "f2:36:22:4e:38:d3"},
-  "lan11": {"bus": "eth", "link_speed": 0, "module_id": 3, "slot": "LAN11", "state": "down", "type": "eth", "macaddr": "f2:36:22:4e:38:d3"},
-  "lan12": {"bus": "eth", "link_speed": 0, "module_id": 3, "slot": "LAN12", "state": "down", "type": "eth", "macaddr": "f2:36:22:4e:38:d3"},
-  "lan13": {"bus": "eth", "link_speed": 0, "module_id": 3, "slot": "LAN13", "state": "down", "type": "eth", "macaddr": "f2:36:22:4e:38:d3"},
-  "lan14": {"bus": "eth", "link_speed": 0, "module_id": 3, "slot": "LAN14", "state": "down", "type": "eth", "macaddr": "f2:36:22:4e:38:d3"},
-  "lan15": {"bus": "eth", "link_speed": 0, "module_id": 3, "slot": "LAN15", "state": "down", "type": "eth", "macaddr": "f2:36:22:4e:38:d3"},
-  "lan16": {"bus": "eth", "link_speed": 0, "module_id": 3, "slot": "LAN16", "state": "down", "type": "eth", "macaddr": "f2:36:22:4e:38:d3"},
-  "mlan0": {
-    "bus": "sdio", "link_speed": 0, "module_id": 0, "slot": "0", "state": "down", "type": "wifi", "macaddr": "80:c5:f2:4a:c2:b7",
-    "slot_path": "soc/soc:internal-regs@d0000000/d00d0000.sdhci/mmc_host/mmc1/mmc1:0001/mmc1:0001:1/net/mlan0"
-  },
-  "sfp": {"bus": "sfp", "link_speed": 0, "module_id": 4, "slot": "SFP", "state": "down", "type": "eth", "macaddr": "f2:36:22:4e:38:d3"},
-  "wwan0": {
-    "bus": "pci", "link_speed": 0, "module_id": 1, "slot": "0", "state": "down", "type": "wwan", "macaddr": "1a:71:57:46:c4:d0",
-    "qmi_device": "/dev/cdc-wdm0"
-  }
-}
+    "eth0": {"type": "eth", "bus": "eth", "state": "up", "slot": "ETH0", "module_id": 0, "macaddr": "de:ad:be:ef:99:99", "link_speed": 1000},
+    "eth2": {"type": "eth", "bus": "usb", "state": "down", "slot": "0", "module_id": 0, "macaddr": "00:50:b6:11:f3:93", "link_speed": 0},
+    "lan1": {"type": "eth", "bus": "eth", "state": "down", "slot": "LAN1", "module_id": 2, "macaddr": "f2:36:22:4e:38:d3", "link_speed": 0},
+    "lan2": {"type": "eth", "bus": "eth", "state": "down", "slot": "LAN2", "module_id": 2, "macaddr": "f2:36:22:4e:38:d3", "link_speed": 0},
+    "lan3": {"type": "eth", "bus": "eth", "state": "down", "slot": "LAN3", "module_id": 2, "macaddr": "f2:36:22:4e:38:d3", "link_speed": 0},
+    "lan4": {"type": "eth", "bus": "eth", "state": "down", "slot": "LAN4", "module_id": 2, "macaddr": "f2:36:22:4e:38:d3", "link_speed": 0},
+    "lan5": {"type": "eth", "bus": "eth", "state": "down", "slot": "LAN5", "module_id": 2, "macaddr": "f2:36:22:4e:38:d3", "link_speed": 0},
+    "lan6": {"type": "eth", "bus": "eth", "state": "down", "slot": "LAN6", "module_id": 2, "macaddr": "f2:36:22:4e:38:d3", "link_speed": 0},
+    "lan7": {"type": "eth", "bus": "eth", "state": "down", "slot": "LAN7", "module_id": 2, "macaddr": "f2:36:22:4e:38:d3", "link_speed": 0},
+    "lan8": {"type": "eth", "bus": "eth", "state": "down", "slot": "LAN8", "module_id": 2, "macaddr": "f2:36:22:4e:38:d3", "link_speed": 0},
+    "lan9": {"type": "eth", "bus": "eth", "state": "down", "slot": "LAN9", "module_id": 3, "macaddr": "f2:36:22:4e:38:d3", "link_speed": 0},
+    "lan10": {"type": "eth", "bus": "eth", "state": "down", "slot": "LAN10", "module_id": 3, "macaddr": "f2:36:22:4e:38:d3", "link_speed": 0},
+    "lan11": {"type": "eth", "bus": "eth", "state": "down", "slot": "LAN11", "module_id": 3, "macaddr": "f2:36:22:4e:38:d3", "link_speed": 0},
+    "lan12": {"type": "eth", "bus": "eth", "state": "down", "slot": "LAN12", "module_id": 3, "macaddr": "f2:36:22:4e:38:d3", "link_speed": 0},
+    "lan13": {"type": "eth", "bus": "eth", "state": "down", "slot": "LAN13", "module_id": 3, "macaddr": "f2:36:22:4e:38:d3", "link_speed": 0},
+    "lan14": {"type": "eth", "bus": "eth", "state": "down", "slot": "LAN14", "module_id": 3, "macaddr": "f2:36:22:4e:38:d3", "link_speed": 0},
+    "lan15": {"type": "eth", "bus": "eth", "state": "down", "slot": "LAN15", "module_id": 3, "macaddr": "f2:36:22:4e:38:d3", "link_speed": 0},
+    "lan16": {"type": "eth", "bus": "eth", "state": "down", "slot": "LAN16", "module_id": 3, "macaddr": "f2:36:22:4e:38:d3", "link_speed": 0},
+    "mlan0": {
+        "type": "wifi", "bus": "sdio", "state": "down", "slot": "0", "module_id": 0, "macaddr": "80:c5:f2:4a:c2:b7", "link_speed": 0,
+        "slot_path": "soc/soc:internal-regs@d0000000/d00d0000.sdhci/mmc_host/mmc1/mmc1:0001/mmc1:0001:1/net/mlan0"
+    },
+    "sfp": {"type": "eth", "bus": "sfp", "state": "down", "slot": "SFP", "module_id": 4, "macaddr": "f2:36:22:4e:38:d3", "link_speed": 0},
+    "wwan0": {
+        "type": "wwan", "bus": "pci", "state": "down", "slot": "0", "module_id": 1, "macaddr": "1a:71:57:46:c4:d0", "link_speed": 0,
+        "slot_path": "/sys/devices/platform/soc/soc:internal-regs@d0000000/d005e000.usb/usb1/1-1", "qmi_device": "/dev/cdc-wdm0"}
+    }

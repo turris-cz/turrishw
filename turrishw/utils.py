@@ -31,6 +31,15 @@ from pathlib import Path
 # ENV variable is needed for blackbox testing with foris-controller
 TURRISHW_FILE_ROOT = os.getenv("TURRISHW_ROOT", "/")
 WIFI_PATH_REGEX = re.compile(r"sys/devices/platform/(.*)$")
+# matches mox and omnia
+QMI_OMNIA_MOX_PATH = r"/sys/devices/platform/soc/soc:internal-regs" \
+    r"(?:@[a-f0-9]{8})?/[a-f0-9]{8}.usb/usb\d/\d-1"
+# matches turris1x
+QMI_TURRIS_PATH = r"/sys/devices/platform/ffe08000.pcie/pci0002:00/" \
+    r"0002:00:00.0/0002:01:00.0/usb[2,3]/[2,3]-[2,1]"
+
+# combination of above (OR)
+QMI_PATH_REGEX = re.compile(f"{QMI_TURRIS_PATH}|{QMI_OMNIA_MOX_PATH}")
 
 logger = logging.getLogger(__name__)
 
@@ -226,7 +235,7 @@ def append_iface(
             return
 
         ifaces[name] = iface_info(
-            name, if_type, bus, port_label, macaddr, qmi_device=qmi_control_dev_path, module_id=module_seq
+            name, if_type, bus, port_label, macaddr, slot_path=qmi_filter_slot_path(slot_path), qmi_device=qmi_control_dev_path, module_id=module_seq
         )
     else:
         ifaces[name] = iface_info(name, if_type, bus, port_label, macaddr, module_id=module_seq)
@@ -282,3 +291,16 @@ def wifi_strip_prefix(s: str) -> str:
         return s  # when in doubt, return the original string and let the consumer handle it
 
     return res.group(1)
+
+
+def qmi_filter_slot_path(s: str) -> str:
+    # uci setting for device might be:
+    #   `network.gsm.device='/sys/devices/platform/soc/soc:internal-regs/f1058000.usb/usb1/1-1'`
+    # We need this as identificator to link physical device to the uci interface
+    # yet we don't necessarily need to share whole path, which is:
+    #    `/sys/devices/platform/soc/soc:internal-regs/f1058000.usb/usb1/1-1/1-1:1.4/net/wwan0`
+    # and we also might want to strip prefix in testing environment.
+    if res := QMI_PATH_REGEX.search(s):
+        return res.group(0)
+    else:
+        return s
