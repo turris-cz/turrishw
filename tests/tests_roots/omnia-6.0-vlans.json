@@ -8,6 +8,6 @@
   "lan2.253": {"type": "eth", "bus": "eth", "state": "down", "slot": "LAN2", "module_id": 0, "macaddr": "d8:58:d7:00:92:9d", "link_speed": 0, "vlan_id": 253},
   "lan3": {"type": "eth", "bus": "eth", "state": "up", "slot": "LAN3", "module_id": 0, "macaddr": "d8:58:d7:00:92:9d", "link_speed": 1000},
   "lan4": {"type": "eth", "bus": "eth", "state": "down", "slot": "LAN4", "module_id": 0, "macaddr": "d8:58:d7:00:92:9d", "link_speed": 0},
-  "wlan0": {"type": "wifi", "bus": "pci", "state": "down", "slot": "2", "module_id": 0, "macaddr": "04:f0:21:24:1d:8d", "link_speed": 0, "slot_path": "soc/soc:pcie/pci0000:00/0000:00:02.0/0000:01:00.0/net/wlan0"},
-  "wlan1": {"type": "wifi", "bus": "pci", "state": "down", "slot": "3", "module_id": 0, "macaddr": "04:f0:21:21:47:b9", "link_speed": 0, "slot_path": "soc/soc:pcie/pci0000:00/0000:00:03.0/0000:02:00.0/net/wlan1"}
+  "wlan0": {"type": "wifi", "bus": "pci", "state": "down", "slot": "2", "module_id": 0, "macaddr": "04:f0:21:24:1d:8d", "link_speed": 0, "slot_path": "soc/soc:pcie/pci0000:00/0000:00:02.0/0000:01:00.0/net/wlan0", "vendor": "Qualcomm Atheros"},
+  "wlan1": {"type": "wifi", "bus": "pci", "state": "down", "slot": "3", "module_id": 0, "macaddr": "04:f0:21:21:47:b9", "link_speed": 0, "slot_path": "soc/soc:pcie/pci0000:00/0000:00:03.0/0000:02:00.0/net/wlan1", "vendor": "Qualcomm Atheros"}
 }

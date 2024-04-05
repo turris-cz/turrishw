@@ -1,4 +1,4 @@
-# Copyright (c) 2018-2023, CZ.NIC, z.s.p.o. (http://www.nic.cz/)
+# Copyright (c) 2018-2025, CZ.NIC, z.s.p.o. (http://www.nic.cz/)
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -22,6 +22,8 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 # EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+import functools
 import logging
 import os
 import re
@@ -41,7 +43,27 @@ QMI_TURRIS_PATH = r"/sys/devices/platform/ffe08000.pcie/pci0002:00/" \
 # combination of above (OR)
 QMI_PATH_REGEX = re.compile(f"{QMI_TURRIS_PATH}|{QMI_OMNIA_MOX_PATH}")
 
+# vendor regular expression
+VENDOR = re.compile(r"0x([0-9a-z]+)$")
+
+# vendor db path
+PCI_VENDORS_DB = "/usr/share/hwdata/pci.ids"
+
 logger = logging.getLogger(__name__)
+
+
+@functools.lru_cache(200)
+def get_vendor_from_db(ven: str) -> str:
+    """Helper function for quries on file db
+    containing information about PCI vendor and type"""
+    with open(PCI_VENDORS_DB, "r") as f:
+        for line in f.readlines():
+            if line.startswith(ven):
+                # the magic is because the string looks like:
+                # `<ven> <full vendor name with spaces>`
+                return line.split(" ", 1)[-1].strip() or ven
+    # return the hex number as fallback
+    return ven
 
 
 def inject_file_root(*paths) -> Path:
@@ -71,6 +93,18 @@ def get_iface_speed(iface):
     except (OSError, ValueError):
         # can't read the file or can't convert value to int (file is empty)
         return 0
+
+
+def get_iface_vendor(iface: str) -> typing.Optional[str]:
+    try:
+        # get base vendor string
+        vendor = get_first_line(inject_file_root('sys/class/net/{}/device/vendor'.format(iface)))
+        # strip vendor `0x` prefix
+        vendor = VENDOR.match(vendor).groups()[0]
+        return get_vendor_from_db(vendor)
+
+    except FileNotFoundError:
+        return None
 
 
 def get_iface_label(iface_path: Path) -> str:
@@ -254,6 +288,7 @@ def iface_info(
 ):
     state = get_iface_state(iface_name)
     iface_speed = get_iface_speed(iface_name) if state == "up" else 0
+    vendor = get_iface_vendor(iface_name)
     res = {
         "type": if_type, "bus": bus, "state": state,
         "slot": port_label, "module_id": module_id, 'macaddr': macaddr,
@@ -268,6 +303,9 @@ def iface_info(
 
     if qmi_device is not None:
         res["qmi_device"] = qmi_device
+
+    if vendor is not None:
+        res["vendor"] = vendor
 
     return res
 

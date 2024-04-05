@@ -18,7 +18,7 @@ import tarfile
 
 import pytest
 
-import turrishw
+import turrishw.utils
 
 
 @pytest.fixture
@@ -34,6 +34,25 @@ def set_root(request, monkeypatch, tmpdir):
     with monkeypatch.context() as m:
         m.setattr(turrishw.utils, "TURRISHW_FILE_ROOT", tdir)
         yield result_json
+
+
+@pytest.fixture
+def mock_pci_db(monkeypatch):
+    """Mocks queries over records in file `/usr/share/hwdata/pci.ids`
+    on router."""
+
+    PCI_MAPPINGS = {
+        '02df': 'Marvell',
+        '168c': 'Qualcomm Atheros',
+        '14c3': 'MEDIATEK Corp.'
+    }
+
+    with monkeypatch.context() as m:
+        m.setattr(
+            turrishw.utils, "get_vendor_from_db",
+            lambda x: PCI_MAPPINGS.get(x)
+        )
+        yield m
 
 
 @pytest.mark.parametrize(
@@ -55,7 +74,7 @@ def set_root(request, monkeypatch, tmpdir):
     ],
     indirect=True
 )
-def test_get_interfaces(set_root):
+def test_get_interfaces(set_root, mock_pci_db):
     with open(set_root) as file:
         thw_ifaces = turrishw.get_ifaces()
         json_data = json.load(file)
@@ -75,7 +94,7 @@ def test_get_interfaces(set_root):
     ],
     indirect=["set_root"],
 )
-def test_get_interfaces_filter(set_root, filter_types):
+def test_get_interfaces_filter(set_root, filter_types, mock_pci_db):
     with open(set_root) as file:
         thw_ifaces = turrishw.get_ifaces(filter_types=filter_types)
         mock_json_data = json.load(file)
