@@ -16,6 +16,8 @@ authors = [
 [project.optional-dependencies]
 tests = [
     "pytest",
+    "pre-commit",
+    "ruff == 0.12.4",
 ]
 
 [project.urls]
@@ -25,3 +27,28 @@ Homepage = "https://gitlab.nic.cz/turris/turrishw"
 include = [
     "/turrishw",
 ]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+ignore = []
+select = [
+    'A',  # flake8-builtins
+    'B',  # flake8-bugbear
+    'E',  # pycodestyle - errors
+    'F',  # pyflakes
+    'I',  # isort
+    'W',  # pycodestyle - warnings
+]
+fixable = ['I001']  # isort: imports are incorrectly sorted
+
+[tool.ruff.lint.per-file-ignores]
+"test_*.py" = ["B011"]  # test files should have asserts
+
+[tool.ruff.lint.isort]
+split-on-trailing-comma = false
+
+[tool.ruff.format]
+skip-magic-trailing-comma = true
