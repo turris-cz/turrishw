@@ -41,17 +41,10 @@ def mock_pci_db(monkeypatch):
     """Mocks queries over records in file `/usr/share/hwdata/pci.ids`
     on router."""
 
-    PCI_MAPPINGS = {
-        '02df': 'Marvell',
-        '168c': 'Qualcomm Atheros',
-        '14c3': 'MEDIATEK Corp.'
-    }
+    PCI_MAPPINGS = {"02df": "Marvell", "168c": "Qualcomm Atheros", "14c3": "MEDIATEK Corp."}
 
     with monkeypatch.context() as m:
-        m.setattr(
-            turrishw.utils, "get_vendor_from_db",
-            lambda x: PCI_MAPPINGS.get(x)
-        )
+        m.setattr(turrishw.utils, "get_vendor_from_db", lambda x: PCI_MAPPINGS.get(x))
         yield m
 
 
@@ -72,7 +65,7 @@ def mock_pci_db(monkeypatch):
         "turris-6.0-vlans",
         "turris-1.1-wwan-7.0",
     ],
-    indirect=True
+    indirect=True,
 )
 def test_get_interfaces(set_root, mock_pci_db):
     with open(set_root) as file:
@@ -86,12 +79,7 @@ def test_get_interfaces(set_root, mock_pci_db):
 
 @pytest.mark.parametrize(
     "set_root,filter_types",
-    [
-        ("omnia", ["eth"]),
-        ("omnia", ["wifi"]),
-        ("mox1", ["wifi", "wwan"]),
-        ("mox1", []),
-    ],
+    [("omnia", ["eth"]), ("omnia", ["wifi"]), ("mox1", ["wifi", "wwan"]), ("mox1", [])],
     indirect=["set_root"],
 )
 def test_get_interfaces_filter(set_root, filter_types, mock_pci_db):

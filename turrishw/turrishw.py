@@ -17,18 +17,14 @@ def get_model():
         # we might get blue Turris exact version from u-boot, so keep the model mapping future-proof
     }
 
-    model = utils.get_first_line(utils.inject_file_root('sys/firmware/devicetree/base/model'))
+    model = utils.get_first_line(utils.inject_file_root("sys/firmware/devicetree/base/model"))
     model = model.rstrip("\x00")
 
     return MODEL_MAP.get(model, "")
 
 
 def get_ifaces(filter_types: typing.Optional[list[str]] = None):
-    MODEL_MAP = {
-        "MOX": mox,
-        "OMNIA": omnia,
-        "TURRIS1X": turris1x,
-    }
+    MODEL_MAP = {"MOX": mox, "OMNIA": omnia, "TURRIS1X": turris1x}
 
     hw_model = get_model()
     model = MODEL_MAP.get(hw_model)

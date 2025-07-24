@@ -34,9 +34,9 @@ logger = logging.getLogger(__name__)
 
 
 def _get_modules():
-    modules = os.listdir(utils.inject_file_root('sys/bus/moxtet/devices'))
+    modules = os.listdir(utils.inject_file_root("sys/bus/moxtet/devices"))
     # modules in /sys/bus/moxtet/devices/ are named moxtet-NAME.SEQUENCE
-    modules = sorted(modules, key=lambda x: x.split('.')[-1])
+    modules = sorted(modules, key=lambda x: x.split(".")[-1])
     return modules
 
 
@@ -70,7 +70,7 @@ def get_interfaces() -> typing.Dict[str, dict]:
 
     modules = _get_modules()
     ifaces: typing.Dict[str, dict] = {}
-    switch_idxs = [i + 1 for i, s in enumerate(modules) if 'topaz' in s or 'peridot' in s]
+    switch_idxs = [i + 1 for i, s in enumerate(modules) if "topaz" in s or "peridot" in s]
 
     second_pass_ifaces: typing.List[typing.Dict[str, str]] = []
     vlan_ifaces: typing.List[str] = utils.get_vlan_interfaces()
@@ -110,13 +110,20 @@ def get_interfaces() -> typing.Dict[str, dict]:
             # PCIe on the MOXTET connector
             # can be PCI (B) or USB3.0 (F) module
             if "usb3" in iface_path_str:
-                m = re.search('/3-([0-4])/', iface_path_str)
+                m = re.search("/3-([0-4])/", iface_path_str)
                 if m:
                     usb_seq = get_module_rank("usb3.0")
                     port = m.group(1)
                     utils.append_iface(
-                        ifaces, iface_name, iface_type, "usb", port, macaddr, module_seq=usb_seq,
-                        slot_path=iface_path_str, parent_device_abs_path=iface_abspath
+                        ifaces,
+                        iface_name,
+                        iface_type,
+                        "usb",
+                        port,
+                        macaddr,
+                        module_seq=usb_seq,
+                        slot_path=iface_path_str,
+                        parent_device_abs_path=iface_abspath,
                     )
                 else:
                     logger.warning("unknown port on USB3.0 module")
@@ -128,16 +135,30 @@ def get_interfaces() -> typing.Dict[str, dict]:
         elif "d0058000.usb" in iface_path_str:
             # USB on the CPU module
             utils.append_iface(
-                ifaces, iface_name, iface_type, "usb", "0", macaddr, module_seq=0, slot_path=iface_path_str,
-                parent_device_abs_path=iface_abspath
+                ifaces,
+                iface_name,
+                iface_type,
+                "usb",
+                "0",
+                macaddr,
+                module_seq=0,
+                slot_path=iface_path_str,
+                parent_device_abs_path=iface_abspath,
             )
         elif "d005e000.usb" in iface_path_str:
             # USB2.0 on the MOXTET connector
             # the only option now is USB device on PCI module
             pci_seq = get_module_rank("pci")
             utils.append_iface(
-                ifaces, iface_name, iface_type, "pci", "0", macaddr, module_seq=pci_seq, slot_path=iface_path_str,
-                parent_device_abs_path=iface_abspath
+                ifaces,
+                iface_name,
+                iface_type,
+                "pci",
+                "0",
+                macaddr,
+                module_seq=pci_seq,
+                slot_path=iface_path_str,
+                parent_device_abs_path=iface_abspath,
             )
         elif "virtual" in iface_path_str:
             # virtual ifaces (loopback, bridges, ...) - we don't care about these

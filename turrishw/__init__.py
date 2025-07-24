@@ -23,6 +23,6 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 # EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from .turrishw import get_model, get_ifaces
+from .turrishw import get_ifaces, get_model
 
-__all__ = ['get_model', 'get_ifaces']
+__all__ = ["get_model", "get_ifaces"]

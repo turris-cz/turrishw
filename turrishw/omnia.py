@@ -63,20 +63,38 @@ def get_interfaces() -> typing.Dict[str, dict]:
         elif "f10f0000.usb3" in iface_path_str:
             # front USB3.0
             utils.append_iface(
-                ifaces, iface_name, iface_type, "usb", "USB Front", macaddr, slot_path=iface_path_str,
-                parent_device_abs_path=iface_abspath
+                ifaces,
+                iface_name,
+                iface_type,
+                "usb",
+                "USB Front",
+                macaddr,
+                slot_path=iface_path_str,
+                parent_device_abs_path=iface_abspath,
             )
         elif "f10f8000.usb3" in iface_path_str:
             # rear USB3.0
             utils.append_iface(
-                ifaces, iface_name, iface_type, "usb", "USB Rear", macaddr, slot_path=iface_path_str,
-                parent_device_abs_path=iface_abspath
+                ifaces,
+                iface_name,
+                iface_type,
+                "usb",
+                "USB Rear",
+                macaddr,
+                slot_path=iface_path_str,
+                parent_device_abs_path=iface_abspath,
             )
         elif "f1058000.usb" in iface_path_str:
             # USB2.0 on the PCI connector 3
             utils.append_iface(
-                ifaces, iface_name, iface_type, "pci", "3", macaddr, slot_path=iface_path_str,
-                parent_device_abs_path=iface_abspath
+                ifaces,
+                iface_name,
+                iface_type,
+                "pci",
+                "3",
+                macaddr,
+                slot_path=iface_path_str,
+                parent_device_abs_path=iface_abspath,
             )
         elif "f1070000.ethernet" in iface_path_str or "f1030000.ethernet" in iface_path_str:
             # ethernet interfaces connected to switch - ignore them

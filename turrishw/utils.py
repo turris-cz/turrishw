@@ -34,11 +34,15 @@ from pathlib import Path
 TURRISHW_FILE_ROOT = os.getenv("TURRISHW_ROOT", "/")
 WIFI_PATH_REGEX = re.compile(r"sys/devices/platform/(.*)$")
 # matches mox and omnia
-QMI_OMNIA_MOX_PATH = r"/sys/devices/platform/soc/soc:internal-regs" \
+QMI_OMNIA_MOX_PATH = (
+    r"/sys/devices/platform/soc/soc:internal-regs"
     r"(?:@[a-f0-9]{8})?/[a-f0-9]{8}.usb/usb\d/\d-1"
+)
 # matches turris1x
-QMI_TURRIS_PATH = r"/sys/devices/platform/ffe08000.pcie/pci0002:00/" \
+QMI_TURRIS_PATH = (
+    r"/sys/devices/platform/ffe08000.pcie/pci0002:00/"
     r"0002:00:00.0/0002:01:00.0/usb[2,3]/[2,3]-[2,1]"
+)
 
 # combination of above (OR)
 QMI_PATH_REGEX = re.compile(f"{QMI_TURRIS_PATH}|{QMI_OMNIA_MOX_PATH}")
@@ -72,12 +76,12 @@ def inject_file_root(*paths) -> Path:
 
 
 def get_first_line(filename: Path) -> str:
-    with open(filename, 'r') as f:
+    with open(filename, "r") as f:
         return f.readline()
 
 
 def get_iface_state(iface):
-    operstate = get_first_line(inject_file_root('sys/class/net/{}/operstate'.format(iface)))
+    operstate = get_first_line(inject_file_root("sys/class/net/{}/operstate".format(iface)))
     if operstate.strip() == "up":
         return "up"
     else:
@@ -86,7 +90,7 @@ def get_iface_state(iface):
 
 def get_iface_speed(iface):
     try:
-        speed = get_first_line(inject_file_root('sys/class/net/{}/speed'.format(iface)))
+        speed = get_first_line(inject_file_root("sys/class/net/{}/speed".format(iface)))
         speed = int(speed)
         # sometimes we can get -1 from sysfs, meaning speed is not negotiated yet
         return max(speed, 0)
@@ -98,7 +102,7 @@ def get_iface_speed(iface):
 def get_iface_vendor(iface: str) -> typing.Optional[str]:
     try:
         # get base vendor string
-        vendor = get_first_line(inject_file_root('sys/class/net/{}/device/vendor'.format(iface)))
+        vendor = get_first_line(inject_file_root("sys/class/net/{}/device/vendor".format(iface)))
         # strip vendor `0x` prefix
         vendor = VENDOR.match(vendor).groups()[0]
         return get_vendor_from_db(vendor)
@@ -155,7 +159,7 @@ def get_qmi_modem_device(interface_path: Path) -> typing.Optional[str]:
 
 
 def find_iface_type(iface):
-    path = inject_file_root('sys/class/net', iface)
+    path = inject_file_root("sys/class/net", iface)
     if path.joinpath("phy80211").is_dir():
         return "wifi"
     if path.joinpath("qmi").is_dir():
@@ -165,7 +169,7 @@ def find_iface_type(iface):
 
 
 def get_ifaces():
-    path = inject_file_root('sys/class/net')
+    path = inject_file_root("sys/class/net")
     for f in path.iterdir():
         # we only need links, not files
         if f.is_symlink():
@@ -203,8 +207,7 @@ def get_vlan_interfaces() -> typing.List[str]:
 
 
 def process_vlan_interfaces(
-    first_pass_ifaces: typing.Dict[str, dict],
-    second_pass_ifaces: typing.List[typing.Dict[str, str]]
+    first_pass_ifaces: typing.Dict[str, dict], second_pass_ifaces: typing.List[typing.Dict[str, str]]
 ) -> None:
     """Process virtual interfaces that have VLAN ID assigned.
     Reuse its parent interface properties and fill in the differences.
@@ -226,14 +229,19 @@ def process_vlan_interfaces(
         if base_iface in first_pass_ifaces:
             parent = first_pass_ifaces[base_iface]
             first_pass_ifaces[iface_name] = iface_info(
-                iface_name, parent["type"], parent["bus"], parent["slot"], macaddr,
-                vlan_id=vlan_id_no, module_id=parent["module_id"]
+                iface_name,
+                parent["type"],
+                parent["bus"],
+                parent["slot"],
+                macaddr,
+                vlan_id=vlan_id_no,
+                module_id=parent["module_id"],
             )
 
 
 def get_TOS_major_version():
-    version = get_first_line(inject_file_root('etc/turris-version'))
-    parts = version.split('.')
+    version = get_first_line(inject_file_root("etc/turris-version"))
+    parts = version.split(".")
     return int(parts[0])
 
 
@@ -269,7 +277,14 @@ def append_iface(
             return
 
         ifaces[name] = iface_info(
-            name, if_type, bus, port_label, macaddr, slot_path=qmi_filter_slot_path(slot_path), qmi_device=qmi_control_dev_path, module_id=module_seq
+            name,
+            if_type,
+            bus,
+            port_label,
+            macaddr,
+            slot_path=qmi_filter_slot_path(slot_path),
+            qmi_device=qmi_control_dev_path,
+            module_id=module_seq,
         )
     else:
         ifaces[name] = iface_info(name, if_type, bus, port_label, macaddr, module_id=module_seq)
@@ -290,9 +305,13 @@ def iface_info(
     iface_speed = get_iface_speed(iface_name) if state == "up" else 0
     vendor = get_iface_vendor(iface_name)
     res = {
-        "type": if_type, "bus": bus, "state": state,
-        "slot": port_label, "module_id": module_id, 'macaddr': macaddr,
-        "link_speed": iface_speed
+        "type": if_type,
+        "bus": bus,
+        "state": state,
+        "slot": port_label,
+        "module_id": module_id,
+        "macaddr": macaddr,
+        "link_speed": iface_speed,
     }
 
     if vlan_id is not None:
@@ -314,8 +333,7 @@ def sort_by_natural_order(interfaces: typing.Dict[str, dict]) -> typing.Dict[str
     """Sort dictionary by keys in natural order."""
     return dict(
         sorted(
-            interfaces.items(),
-            key=lambda x: [int(s) if s.isdigit() else s.lower() for s in re.split(r"(\d+)", x[0])]
+            interfaces.items(), key=lambda x: [int(s) if s.isdigit() else s.lower() for s in re.split(r"(\d+)", x[0])]
         )
     )
 

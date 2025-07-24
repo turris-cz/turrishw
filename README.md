@@ -10,11 +10,11 @@ libraries for specific use cases:
 
 Dependencies
 ------------
-* Python3 (>=3.7) required for run
+* Python3 (>=3.10) required for run
 * testing:
   * pytest
-  * tox
-  * flake8
+  * pre-commit
+  * ruff
 
 Tests
 -----
@@ -23,12 +23,12 @@ Tox is utilized for more flexible test execution.
 
 To run tests you should run in project's root directory run following command:
 ```
-tox -e py37
+pytest
 ```
 
 To run linter check, use following command:
 ```
-tox -e lint
+pre-commit run --hook-stage push --all-files
 ```
 
 Developers specific notes
