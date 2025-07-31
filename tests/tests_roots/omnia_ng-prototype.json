@@ -1,0 +1,77 @@
+{
+    "eth0": {
+        "type": "eth",
+        "bus": "eth",
+        "state": "up",
+        "slot": "ETH0",
+        "module_id": 0,
+        "macaddr": "00:03:7f:ba:db:ad",
+        "link_speed": 1000
+    },
+    "eth1": {
+        "type": "eth",
+        "bus": "eth",
+        "state": "down",
+        "slot": "ETH1",
+        "module_id": 0,
+        "macaddr": "6a:3d:47:3a:90:4f",
+        "link_speed": 0
+    },
+    "eth2": {
+        "type": "eth",
+        "bus": "eth",
+        "state": "down",
+        "slot": "ETH2",
+        "module_id": 0,
+        "macaddr": "b2:16:89:76:f2:1f",
+        "link_speed": 0
+    },
+    "eth3": {
+        "type": "eth",
+        "bus": "eth",
+        "state": "down",
+        "slot": "ETH3",
+        "module_id": 0,
+        "macaddr": "a2:00:dc:11:1d:8b",
+        "link_speed": 0
+    },
+    "eth4": {
+        "type": "eth",
+        "bus": "eth",
+        "state": "down",
+        "slot": "SFP0",
+        "module_id": 0,
+        "macaddr": "9a:ba:f5:3d:d5:d6",
+        "link_speed": 0
+    },
+    "eth5": {
+        "type": "eth",
+        "bus": "eth",
+        "state": "down",
+        "slot": "SFP1",
+        "module_id": 0,
+        "macaddr": "a6:a4:5a:57:8f:1f",
+        "link_speed": 0
+    },
+    "wlan0": {
+        "type": "wifi",
+        "bus": "wifi",
+        "state": "down",
+        "slot": "0",
+        "module_id": 0,
+        "macaddr": "c4:4b:d1:60:00:3f",
+        "link_speed": 0,
+        "slot_path": "soc@0/c000000.wifi/net/wlan0"
+    },
+    "wlan1": {
+        "type": "wifi",
+        "bus": "pci",
+        "state": "down",
+        "slot": "0",
+        "module_id": 0,
+        "macaddr": "c4:93:00:56:95:02",
+        "link_speed": 0,
+        "slot_path": "soc@0/20000000.pci/pci0002:00/0002:00:00.0/0002:01:00.0/net/wlan1",
+        "pci_id": "17CB:1109"
+    }
+}

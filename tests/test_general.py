@@ -64,6 +64,7 @@ def mock_pci_db(monkeypatch):
         "turris",
         "turris-6.0-vlans",
         "turris-1.1-wwan-7.0",
+        "omnia_ng-prototype",
     ],
     indirect=True,
 )
