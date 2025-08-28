@@ -6,6 +6,7 @@
     },
     "wlan0": {
         "bus": "pci", "link_speed": 0, "macaddr": "04:f0:21:1c:b7:58", "module_id": 1, "slot": "0", "state": "down", "type": "wifi",
-        "slot_path": "soc/d0070000.pcie/pci0000:00/0000:00:00.0/0000:01:00.0/net/wlan0", "vendor": "Qualcomm Atheros"
+        "slot_path": "soc/d0070000.pcie/pci0000:00/0000:00:00.0/0000:01:00.0/net/wlan0", "vendor": "Qualcomm Atheros",
+        "pci_id": "168C:003C"
     }
 }

@@ -90,6 +90,10 @@ def get_iface_state(iface) -> State:
         return State.DOWN
 
 
+def get_pci_id(iface) -> typing.Optional[str]:
+    return parse_uevent(inject_file_root("sys/class/net/{}/device/uevent".format(iface))).get("PCI_ID")
+
+
 def get_iface_speed(iface):
     try:
         speed = get_first_line(inject_file_root("sys/class/net/{}/speed".format(iface)))
@@ -309,6 +313,7 @@ def iface_info(
     state = get_iface_state(iface_name)
     iface_speed = get_iface_speed(iface_name) if state == State.UP else 0
     vendor = get_iface_vendor(iface_name)
+    pci_id = get_pci_id(iface_name)
 
     return Interface(
         name=iface_name,
@@ -323,6 +328,7 @@ def iface_info(
         slot_path=slot_path,
         qmi_device=qmi_device,
         vendor=vendor,
+        pci_id=pci_id,
     )
 
 
@@ -348,3 +354,16 @@ def qmi_filter_slot_path(s: str) -> str:
         return res.group(0)
     else:
         return s
+
+
+def parse_uevent(path: Path) -> typing.Dict[str, str]:
+    if not path.exists():
+        return {}
+    res = {}
+    with path.open('r') as f:
+        for line in f.readlines():
+            if line := line.strip():
+                key, *val = line.split("=", 1)
+                res[key] = val[0] if val else ""
+
+    return res

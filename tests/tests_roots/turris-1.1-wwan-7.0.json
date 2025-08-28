@@ -7,7 +7,7 @@
     "lan5": {"type": "eth", "bus": "eth", "state": "up", "slot": "LAN5", "module_id": 0, "macaddr": "d8:58:d7:00:05:77", "link_speed": 1000},
     "wlan0": {
         "type": "wifi", "bus": "pci", "state": "down", "slot": "0", "module_id": 0, "macaddr": "60:02:b4:7d:86:32", "link_speed": 0,
-        "slot_path": "ffe09000.pcie/pci0001:02/0001:02:00.0/0001:03:00.0/net/wlan0", "vendor": "Qualcomm Atheros"
+        "slot_path": "ffe09000.pcie/pci0001:02/0001:02:00.0/0001:03:00.0/net/wlan0", "vendor": "Qualcomm Atheros", "pci_id": "168C:0030"
     },
     "wwan0": {
         "type": "wwan", "bus": "pci", "state": "down", "slot": "2", "module_id": 0, "macaddr": "1a:71:57:46:c4:d0", "link_speed": 0,

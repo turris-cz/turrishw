@@ -47,6 +47,7 @@ class Interface:
     slot_path: typing.Optional[str] = None
     qmi_device: typing.Optional[str] = None
     vendor: typing.Optional[str] = None
+    pci_id: typing.Optional[str] = None
 
     @property
     def sort_key(self):
