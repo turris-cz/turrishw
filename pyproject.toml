@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "turrishw"
-version = "1.0.0"
+version = "1.1.0"
 dynamic = []
 description = "Turris hardware detection/query tool."
 readme = "README.md"
