@@ -1,5 +1,6 @@
 import logging
 import typing
+from dataclasses import asdict
 
 from . import mox, omnia, omnia_ng, turris1x, utils
 
@@ -36,12 +37,14 @@ def get_ifaces(filter_types: typing.Optional[list[str]] = None):
 
     ifaces = model.get_interfaces()
     if filter_types is not None:
-        ifaces = {if_name: if_data for if_name, if_data in ifaces.items() if if_data["type"] in filter_types}
+        ifaces = [e for e in ifaces if e.type in filter_types]
 
     # Reading interfaces from /sys might return them in different order based on tool used.
     # See difference between order of items for `os.listdir()` vs `ls` in shell.
     #
     # It will be more useful for consumer of `turrishw` to get interfaces sorted in resulting dictionary
     # to avoid dealing with the possibly random order of interfaces.
-
-    return utils.sort_by_natural_order(ifaces)
+    return {
+        iface.name: {k: v for k, v in asdict(iface).items() if v is not None and k not in ["name"]}  # to be compatible with older API
+        for iface in sorted(ifaces, key=lambda e: e.sort_key)
+    }

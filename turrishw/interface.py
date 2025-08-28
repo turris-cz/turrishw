@@ -1,4 +1,4 @@
-# Copyright (c) 2018-2025, CZ.NIC, z.s.p.o. (http://www.nic.cz/)
+# Copyright (c) 2025, CZ.NIC, z.s.p.o. (http://www.nic.cz/)
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -22,9 +22,39 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 # EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+import re
+import typing
+from dataclasses import dataclass
+from enum import Enum
 
 
-from .interface import Interface
-from .turrishw import get_ifaces, get_model
+class State(str, Enum):
+    UP = "up"
+    DOWN = "down"
 
-__all__ = ["get_model", "get_ifaces", "Interface"]
+
+@dataclass
+class Interface:
+    name: str
+    type: str
+    bus: str
+    slot: str
+    macaddr: str
+    module_id: int = 0
+    link_speed: int = 0
+    state: State = State.DOWN
+    vlan_id: typing.Optional[int] = None
+    slot_path: typing.Optional[str] = None
+    qmi_device: typing.Optional[str] = None
+    vendor: typing.Optional[str] = None
+
+    @property
+    def sort_key(self):
+        # lan1.200 -> ("lan", 1, 200)
+        parts = [e for e in re.split(r"\.(\d+)$", self.name, maxsplit=1) if e]
+        name, suffix = (parts[0], int(parts[1])) if len(parts) == 2 else (parts[0], -1)
+
+        splitted = [e for e in re.split(r"(\d+)$", name, maxsplit=1) if e]
+        if len(splitted) == 1:
+            return splitted[0], -1, suffix  # eth preceeds eth0
+        return splitted[0], int(splitted[1]), suffix

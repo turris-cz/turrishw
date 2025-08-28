@@ -1,4 +1,4 @@
-# Copyright (c) 2021-2023, CZ.NIC, z.s.p.o. (https://www.nic.cz/)
+# Copyright (c) 2021-2025, CZ.NIC, z.s.p.o. (https://www.nic.cz/)
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -31,21 +31,24 @@ import typing
 from pathlib import Path
 
 from . import utils
+from .interface import Interface
 
 logger = logging.getLogger(__name__)
 
 
-def get_interfaces() -> typing.Dict[str, dict]:
+def get_interfaces() -> typing.List[Interface]:
     def detect_pcie_wifi(iface, path, regex):
         """Try to detect wifi interface based on regex"""
         m = re.search(regex, path)
         if m:
-            utils.append_iface(ifaces, iface, "wifi", "pci", "0", macaddr, slot_path=path)
+            ifaces.append(
+                utils.make_iface(iface, "wifi", "pci", "0", macaddr, slot_path=path)
+            )
         else:
             logger.warning("unknown PCI slot module")
 
-    ifaces: typing.Dict[str, dict] = {}
-    second_pass_ifaces: typing.List[typing.Dict[str, str]] = []
+    ifaces: typing.List[Interface] = []
+    virtual_ifaces: typing.List[typing.Dict[str, str]] = []
     vlan_ifaces: typing.List[str] = utils.get_vlan_interfaces()
 
     # First pass - process the detected physical interfaces
@@ -58,9 +61,11 @@ def get_interfaces() -> typing.Dict[str, dict]:
 
         if "mdio@ffe24520" in iface_path_str:  # Switch exported ports
             port_label = utils.get_iface_label(iface_path)
-            utils.append_iface(ifaces, iface_name, "eth", "eth", port_label, macaddr)
+            ifaces.append(utils.make_iface(iface_name, "eth", "eth", port_label, macaddr))
         elif "ffe26000.ethernet" in iface_path_str:  # WAN port
-            utils.append_iface(ifaces, iface_name, "eth", "eth", "WAN", macaddr)
+            ifaces.append(
+                utils.make_iface(iface_name, "eth", "eth", "WAN", macaddr)
+            )
         elif "pci0001:02" in iface_path_str:  # pcie wifi
             detect_pcie_wifi(iface_name, iface_path_str, r"/0001:02:00\.0/")
         elif "pci0002:04" in iface_path_str:  # pcie wifi
@@ -68,51 +73,55 @@ def get_interfaces() -> typing.Dict[str, dict]:
         elif "fsl-ehci.0" in iface_path_str:
             # rear USB2.0 ports.
             if "1-1.1" in iface_path_str:
-                utils.append_iface(
-                    ifaces,
-                    iface_name,
-                    iface_type,
-                    "usb",
-                    "USB 1",
-                    macaddr,
-                    slot_path=iface_path_str,
-                    parent_device_abs_path=iface_abspath,
+                ifaces.append(
+                    utils.make_iface(
+                        iface_name,
+                        iface_type,
+                        "usb",
+                        "USB 1",
+                        macaddr,
+                        slot_path=iface_path_str,
+                        parent_device_abs_path=iface_abspath,
+                    )
                 )
             elif "1-1.2" in iface_path_str:
-                utils.append_iface(
-                    ifaces,
-                    iface_name,
-                    iface_type,
-                    "usb",
-                    "USB 2",
-                    macaddr,
-                    slot_path=iface_path_str,
-                    parent_device_abs_path=iface_abspath,
+                ifaces.append(
+                    utils.make_iface(
+                        iface_name,
+                        iface_type,
+                        "usb",
+                        "USB 2",
+                        macaddr,
+                        slot_path=iface_path_str,
+                        parent_device_abs_path=iface_abspath,
+                    )
                 )
         # Turris 1.1 USB ports
         elif "pci0002:00" in iface_path_str:
             if "2-2" in iface_path_str:
-                utils.append_iface(
-                    ifaces,
-                    iface_name,
-                    iface_type,
-                    "pci",
-                    "2",
-                    macaddr,
-                    slot_path=iface_path_str,
-                    parent_device_abs_path=iface_abspath,
+                ifaces.append(
+                    utils.make_iface(
+                        iface_name,
+                        iface_type,
+                        "pci",
+                        "2",
+                        macaddr,
+                        slot_path=iface_path_str,
+                        parent_device_abs_path=iface_abspath,
+                    )
                 )
             elif "3-1" in iface_path_str:
                 # front USB 3.0 port
-                utils.append_iface(
-                    ifaces,
-                    iface_name,
-                    iface_type,
-                    "usb",
-                    "USB Front",
-                    macaddr,
-                    slot_path=iface_path_str,
-                    parent_device_abs_path=iface_abspath,
+                ifaces.append(
+                    utils.make_iface(
+                        iface_name,
+                        iface_type,
+                        "usb",
+                        "USB Front",
+                        macaddr,
+                        slot_path=iface_path_str,
+                        parent_device_abs_path=iface_abspath,
+                    )
                 )
         elif "ffe24000.ethernet" in iface_path_str or "ffe25000.ethernet" in iface_path_str:
             # ethernet interfaces connected to switch - ignore them
@@ -120,11 +129,11 @@ def get_interfaces() -> typing.Dict[str, dict]:
         elif "virtual" in iface_path_str:
             # virtual ifaces (loopback, bridges, ...) - we don't care about these
             if iface_name in vlan_ifaces:
-                second_pass_ifaces.append({"name": iface_name, "macaddr": macaddr})
+                virtual_ifaces.append({"name": iface_name, "macaddr": macaddr})
         else:
             logger.warning("unknown interface type: %s", iface_name)
 
     # Second pass - process virtual interfaces with VLAN assigned.
-    utils.process_vlan_interfaces(ifaces, second_pass_ifaces)
+    vlan_ifaces = utils.make_vlan_interfaces(ifaces, virtual_ifaces)
 
-    return ifaces
+    return ifaces + vlan_ifaces

@@ -30,6 +30,8 @@ import re
 import typing
 from pathlib import Path
 
+from .interface import Interface, State
+
 # ENV variable is needed for blackbox testing with foris-controller
 TURRISHW_FILE_ROOT = os.getenv("TURRISHW_ROOT", "/")
 WIFI_PATH_REGEX = re.compile(r"sys/devices/platform/(.*)$")
@@ -80,12 +82,12 @@ def get_first_line(filename: Path) -> str:
         return f.readline()
 
 
-def get_iface_state(iface):
+def get_iface_state(iface) -> State:
     operstate = get_first_line(inject_file_root("sys/class/net/{}/operstate".format(iface)))
-    if operstate.strip() == "up":
-        return "up"
+    if operstate.strip() == State.UP:
+        return State.UP
     else:
-        return "down"
+        return State.DOWN
 
 
 def get_iface_speed(iface):
@@ -206,19 +208,21 @@ def get_vlan_interfaces() -> typing.List[str]:
     return [iface.name for iface in path.glob("*.*")]
 
 
-def process_vlan_interfaces(
-    first_pass_ifaces: typing.Dict[str, dict], second_pass_ifaces: typing.List[typing.Dict[str, str]]
-) -> None:
+def make_vlan_interfaces(
+    physical_ifaces: typing.List[Interface], virt_ifaces: typing.List[typing.Dict[str, str]]
+) -> typing.List[Interface]:
     """Process virtual interfaces that have VLAN ID assigned.
     Reuse its parent interface properties and fill in the differences.
 
     For instance: eth2.100 should always be of the same type (wired ethernet) as its parent (eth2),
     but it could have a different MAC address.
 
-    first_pass_ifaces: Physical interfaces detected in first pass processing.
-    second_pass_ifaces: Virtual interfaces that need to be matched to their parent interfaces.
+    physical_ifaces: Physical interfaces detected in first pass processing.
+    virt_ifaces: Virtual interfaces that need to be matched to their parent interfaces.
     """
-    for virt_iface in second_pass_ifaces:
+    res = []
+    phy_map = {e.name: e for e in physical_ifaces}
+    for virt_iface in virt_ifaces:
         iface_name = virt_iface["name"]
         macaddr = virt_iface["macaddr"]
         base_iface, vlan_id = iface_name.rsplit(".", maxsplit=1)
@@ -226,17 +230,19 @@ def process_vlan_interfaces(
 
         # Parent interface (e.g. eth2) must be available and processed if we intend to reference it.
         # If we can't find the parent, ignore this interface.
-        if base_iface in first_pass_ifaces:
-            parent = first_pass_ifaces[base_iface]
-            first_pass_ifaces[iface_name] = iface_info(
-                iface_name,
-                parent["type"],
-                parent["bus"],
-                parent["slot"],
-                macaddr,
-                vlan_id=vlan_id_no,
-                module_id=parent["module_id"],
+        if parent := phy_map.get(base_iface):
+            res.append(
+                iface_info(
+                    iface_name,
+                    parent.type,
+                    parent.bus,
+                    parent.slot,
+                    macaddr,
+                    vlan_id=vlan_id_no,
+                    module_id=parent.module_id,
+                )
             )
+    return res
 
 
 def get_TOS_major_version():
@@ -245,8 +251,7 @@ def get_TOS_major_version():
     return int(parts[0])
 
 
-def append_iface(
-    ifaces: typing.Dict[str, dict],
+def make_iface(
     name: str,
     if_type: str,
     bus: str,
@@ -255,7 +260,7 @@ def append_iface(
     slot_path: typing.Optional[str] = None,
     parent_device_abs_path: typing.Optional[Path] = None,
     module_seq: int = 0,
-) -> None:
+) -> typing.Optional[Interface]:
     """
     `slot_path` is optional argument, which is currently relevant only for wireless devices.
     If `slot_path` is reported by turrishw, then foris-controller can better match the present network devices
@@ -267,7 +272,7 @@ def append_iface(
     `module_id` is relevant only for Mox, fallback to 0 for other Turris models
     """
     if if_type == "wifi" and slot_path:
-        ifaces[name] = iface_info(
+        return iface_info(
             name, if_type, bus, port_label, macaddr, slot_path=wifi_strip_prefix(slot_path), module_id=module_seq
         )
     elif if_type == "wwan" and parent_device_abs_path:
@@ -276,7 +281,7 @@ def append_iface(
             logger.warning(f"Failed to find qmi control device for interface '{name}', ignoring the interface.")
             return
 
-        ifaces[name] = iface_info(
+        return iface_info(
             name,
             if_type,
             bus,
@@ -286,8 +291,8 @@ def append_iface(
             qmi_device=qmi_control_dev_path,
             module_id=module_seq,
         )
-    else:
-        ifaces[name] = iface_info(name, if_type, bus, port_label, macaddr, module_id=module_seq)
+
+    return iface_info(name, if_type, bus, port_label, macaddr, module_id=module_seq)
 
 
 def iface_info(
@@ -300,41 +305,24 @@ def iface_info(
     slot_path: typing.Optional[str] = None,
     qmi_device: typing.Optional[str] = None,
     module_id: int = 0,  # `module_id` is useful only for Mox, fallback to 0 for other HW
-):
+) -> Interface:
     state = get_iface_state(iface_name)
-    iface_speed = get_iface_speed(iface_name) if state == "up" else 0
+    iface_speed = get_iface_speed(iface_name) if state == State.UP else 0
     vendor = get_iface_vendor(iface_name)
-    res = {
-        "type": if_type,
-        "bus": bus,
-        "state": state,
-        "slot": port_label,
-        "module_id": module_id,
-        "macaddr": macaddr,
-        "link_speed": iface_speed,
-    }
 
-    if vlan_id is not None:
-        res["vlan_id"] = vlan_id
-
-    if slot_path is not None:
-        res["slot_path"] = slot_path
-
-    if qmi_device is not None:
-        res["qmi_device"] = qmi_device
-
-    if vendor is not None:
-        res["vendor"] = vendor
-
-    return res
-
-
-def sort_by_natural_order(interfaces: typing.Dict[str, dict]) -> typing.Dict[str, dict]:
-    """Sort dictionary by keys in natural order."""
-    return dict(
-        sorted(
-            interfaces.items(), key=lambda x: [int(s) if s.isdigit() else s.lower() for s in re.split(r"(\d+)", x[0])]
-        )
+    return Interface(
+        name=iface_name,
+        type=if_type,
+        bus=bus,
+        slot=port_label,
+        macaddr=macaddr,
+        module_id=module_id,
+        link_speed=iface_speed,
+        state=state,
+        vlan_id=vlan_id,
+        slot_path=slot_path,
+        qmi_device=qmi_device,
+        vendor=vendor,
     )
 
 
