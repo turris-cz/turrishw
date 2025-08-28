@@ -360,7 +360,7 @@ def parse_uevent(path: Path) -> typing.Dict[str, str]:
     if not path.exists():
         return {}
     res = {}
-    with path.open('r') as f:
+    with path.open("r") as f:
         for line in f.readlines():
             if line := line.strip():
                 key, *val = line.split("=", 1)

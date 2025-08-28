@@ -45,6 +45,8 @@ def get_ifaces(filter_types: typing.Optional[list[str]] = None):
     # It will be more useful for consumer of `turrishw` to get interfaces sorted in resulting dictionary
     # to avoid dealing with the possibly random order of interfaces.
     return {
-        iface.name: {k: v for k, v in asdict(iface).items() if v is not None and k not in ["name"]}  # to be compatible with older API
+        iface.name: {
+            k: v for k, v in asdict(iface).items() if v is not None and k not in ["name"]
+        }  # to be compatible with older API
         for iface in sorted(ifaces, key=lambda e: e.sort_key)
     }

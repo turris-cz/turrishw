@@ -75,9 +75,7 @@ def get_interfaces() -> typing.List[Interface]:
             m = re.search(r"/0002:00:0([0-3])\.0/", iface_path_str)
             if m:
                 slot = m.group(1)
-                ifaces.append(
-                    utils.make_iface(iface_name, "wifi", "pci", slot, macaddr, slot_path=iface_path_str)
-                )
+                ifaces.append(utils.make_iface(iface_name, "wifi", "pci", slot, macaddr, slot_path=iface_path_str))
             else:
                 logger.warning("unknown PCI slot module")
         elif ".wifi" in iface_path_str:

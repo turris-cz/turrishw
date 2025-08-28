@@ -41,9 +41,7 @@ def get_interfaces() -> typing.List[Interface]:
         """Try to detect wifi interface based on regex"""
         m = re.search(regex, path)
         if m:
-            ifaces.append(
-                utils.make_iface(iface, "wifi", "pci", "0", macaddr, slot_path=path)
-            )
+            ifaces.append(utils.make_iface(iface, "wifi", "pci", "0", macaddr, slot_path=path))
         else:
             logger.warning("unknown PCI slot module")
 
@@ -63,9 +61,7 @@ def get_interfaces() -> typing.List[Interface]:
             port_label = utils.get_iface_label(iface_path)
             ifaces.append(utils.make_iface(iface_name, "eth", "eth", port_label, macaddr))
         elif "ffe26000.ethernet" in iface_path_str:  # WAN port
-            ifaces.append(
-                utils.make_iface(iface_name, "eth", "eth", "WAN", macaddr)
-            )
+            ifaces.append(utils.make_iface(iface_name, "eth", "eth", "WAN", macaddr))
         elif "pci0001:02" in iface_path_str:  # pcie wifi
             detect_pcie_wifi(iface_name, iface_path_str, r"/0001:02:00\.0/")
         elif "pci0002:04" in iface_path_str:  # pcie wifi
